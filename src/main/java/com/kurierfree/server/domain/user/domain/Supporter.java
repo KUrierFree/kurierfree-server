@@ -15,6 +15,6 @@ public class Supporter extends User{
     private Semester semester;
 
     @Column(nullable = false)
-    private ApplicationStatus status;
+    private ApplicationStatus status = ApplicationStatus.PENDING;
 
 }
