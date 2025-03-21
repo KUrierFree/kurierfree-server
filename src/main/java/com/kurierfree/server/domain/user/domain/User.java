@@ -1,8 +1,6 @@
 package com.kurierfree.server.domain.user.domain;
 
 
-import com.kurierfree.server.domain.user.Gender;
-import com.kurierfree.server.domain.user.Role;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
