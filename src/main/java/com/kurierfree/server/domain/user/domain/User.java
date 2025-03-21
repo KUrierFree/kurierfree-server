@@ -19,7 +19,7 @@ public abstract class User {
     @Column(nullable = false)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private int studentId;
 
     @Column(nullable = false)
