@@ -1,5 +1,6 @@
 package com.kurierfree.server.domain.user.dto.request;
 
+import com.kurierfree.server.domain.user.domain.DisabilityType;
 import com.kurierfree.server.domain.user.domain.Gender;
 import com.kurierfree.server.domain.user.domain.Role;
 import lombok.AllArgsConstructor;
@@ -17,6 +18,7 @@ public class UserRegisterRequest {
     private String grade;
     private String password;
     private Role role;
+    private DisabilityType disabilityType;
 }
 
 
