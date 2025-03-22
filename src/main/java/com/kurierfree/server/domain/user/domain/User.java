@@ -1,16 +1,17 @@
 package com.kurierfree.server.domain.user.domain;
 
+import com.kurierfree.server.domain.user.dto.request.UserRegisterRequest;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Builder
+@Getter
 @Table(name = "user")
-public abstract class User {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,4 +39,15 @@ public abstract class User {
     @Column(nullable = false)
     private Role role;
 
+    public static User from(UserRegisterRequest userRegisterRequest) {
+        return User.builder()
+                .studentId(userRegisterRequest.getStudentId())
+                .name(userRegisterRequest.getName())
+                .department(userRegisterRequest.getDepartment())
+                .gender(userRegisterRequest.getGender())
+                .grade(userRegisterRequest.getGrade())
+                .password(userRegisterRequest.getPassword())
+                .role(userRegisterRequest.getRole())
+                .build();
+    }
 }
