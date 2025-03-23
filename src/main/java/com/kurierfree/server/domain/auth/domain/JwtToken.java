@@ -1,16 +1,12 @@
 package com.kurierfree.server.domain.auth.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-@Setter
-@Getter
 @Builder
+@Data
 @AllArgsConstructor
 public class JwtToken {
+    private String grantType;
     private String accessToken;
     private String refreshToken;
-    private String grantType;
 }

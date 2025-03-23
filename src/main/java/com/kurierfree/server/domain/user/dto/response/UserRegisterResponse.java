@@ -1,6 +1,5 @@
 package com.kurierfree.server.domain.user.dto.response;
 
-import com.kurierfree.server.domain.auth.domain.JwtToken;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,8 +7,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 @Builder
-public class UserLoginResponse {
+public class UserRegisterResponse {
     private String message;
-    private UserResponse user;
-    private JwtToken token;
+    private Long userId;
 }
