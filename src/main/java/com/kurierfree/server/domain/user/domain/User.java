@@ -1,6 +1,5 @@
 package com.kurierfree.server.domain.user.domain;
 
-import com.kurierfree.server.domain.user.dto.request.UserRegisterRequest;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -8,7 +7,6 @@ import lombok.*;
 @Inheritance(strategy = InheritanceType.JOINED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Builder
 @Getter
 @Table(name = "user")
 public class User {
@@ -39,15 +37,13 @@ public class User {
     @Column(nullable = false)
     private Role role;
 
-    public static User from(UserRegisterRequest userRegisterRequest) {
-        return User.builder()
-                .studentId(userRegisterRequest.getStudentId())
-                .name(userRegisterRequest.getName())
-                .department(userRegisterRequest.getDepartment())
-                .gender(userRegisterRequest.getGender())
-                .grade(userRegisterRequest.getGrade())
-                .password(userRegisterRequest.getPassword())
-                .role(userRegisterRequest.getRole())
-                .build();
+    public User(int studentId, String name, String department, Gender gender, String grade, String password, Role role) {
+        this.studentId = studentId;
+        this.name = name;
+        this.department = department;
+        this.grade = grade;
+        this.gender = gender;
+        this.password = password;
+        this.role = role;
     }
 }
