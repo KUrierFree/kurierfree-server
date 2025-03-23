@@ -1,4 +1,4 @@
-package com.kurierfree.server.domain.user.domain;
+package com.kurierfree.server.domain.user.domain.enums;
 
 public enum ApplicationStatus {
     PENDING,

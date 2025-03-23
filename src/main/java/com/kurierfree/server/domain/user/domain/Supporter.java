@@ -1,6 +1,9 @@
 package com.kurierfree.server.domain.user.domain;
 
 import com.kurierfree.server.domain.semester.domain.Semester;
+import com.kurierfree.server.domain.user.domain.enums.ApplicationStatus;
+import com.kurierfree.server.domain.user.domain.enums.Gender;
+import com.kurierfree.server.domain.user.domain.enums.Role;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

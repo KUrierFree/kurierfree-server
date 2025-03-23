@@ -8,7 +8,7 @@ import com.kurierfree.server.domain.user.dao.DisabledStudentRepository;
 import com.kurierfree.server.domain.user.dao.SupporterRepository;
 import com.kurierfree.server.domain.user.dao.UserRepository;
 import com.kurierfree.server.domain.user.domain.DisabledStudent;
-import com.kurierfree.server.domain.user.domain.Role;
+import com.kurierfree.server.domain.user.domain.enums.Role;
 import com.kurierfree.server.domain.user.domain.Supporter;
 import com.kurierfree.server.domain.user.domain.User;
 import com.kurierfree.server.domain.user.dto.request.UserLoginRequest;

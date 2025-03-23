@@ -1,8 +1,8 @@
 package com.kurierfree.server.domain.user.dto.request;
 
-import com.kurierfree.server.domain.user.domain.DisabilityType;
-import com.kurierfree.server.domain.user.domain.Gender;
-import com.kurierfree.server.domain.user.domain.Role;
+import com.kurierfree.server.domain.user.domain.enums.DisabilityType;
+import com.kurierfree.server.domain.user.domain.enums.Gender;
+import com.kurierfree.server.domain.user.domain.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

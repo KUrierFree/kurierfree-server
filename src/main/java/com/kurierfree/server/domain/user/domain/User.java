@@ -1,5 +1,7 @@
 package com.kurierfree.server.domain.user.domain;
 
+import com.kurierfree.server.domain.user.domain.enums.Gender;
+import com.kurierfree.server.domain.user.domain.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
