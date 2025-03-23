@@ -45,10 +45,6 @@ public class SemesterService {
         }
 
         Semester findSemester = semesterRepository.findByYearAndSemesterTime(currentYear, currentSemesterTime);
-        if (findSemester == null){
-            return createCurrentSemester();
-        } else {
-            return findSemester;
-        }
+        return (findSemester != null) ? findSemester : createCurrentSemester();
     }
 }
