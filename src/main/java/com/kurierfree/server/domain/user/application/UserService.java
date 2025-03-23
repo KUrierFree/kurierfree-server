@@ -2,6 +2,7 @@ package com.kurierfree.server.domain.user.application;
 
 import com.kurierfree.server.domain.auth.domain.JwtToken;
 import com.kurierfree.server.domain.auth.infra.JwtGenerator;
+import com.kurierfree.server.domain.auth.infra.JwtProvider;
 import com.kurierfree.server.domain.semester.application.SemesterService;
 import com.kurierfree.server.domain.user.dao.DisabledStudentRepository;
 import com.kurierfree.server.domain.user.dao.SupporterRepository;
@@ -30,13 +31,15 @@ public class UserService {
 
     private final PasswordEncoder passwordEncoder;
     private final JwtGenerator jwtGenerator;
+    private final JwtProvider jwtProvider;
 
     public UserService(SupporterRepository supporterRepository,
                        DisabledStudentRepository disabledStudentRepository,
                        SemesterService semesterService,
                        UserRepository userRepository,
                        PasswordEncoder passwordEncoder,
-                       JwtGenerator jwtGenerator) {
+                       JwtGenerator jwtGenerator,
+                       JwtProvider jwtProvider) {
         this.supporterRepository = supporterRepository;
         this.disabledStudentRepository = disabledStudentRepository;
         this.semesterService = semesterService;
@@ -44,6 +47,7 @@ public class UserService {
 
         this.passwordEncoder = passwordEncoder;
         this.jwtGenerator = jwtGenerator;
+        this.jwtProvider = jwtProvider;
     }
 
     @Transactional
@@ -113,5 +117,12 @@ public class UserService {
                 .user(userResponse)
                 .token(jwtToken)
                 .build();
+    }
+
+    @Transactional
+    public Long logout(String token) {
+        String jwtToken = token.substring(7);
+        return jwtProvider.getUserIdFromToken(jwtToken);
+
     }
 }
