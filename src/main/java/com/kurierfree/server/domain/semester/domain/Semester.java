@@ -28,12 +28,4 @@ public class Semester {
         this.year = year;
         this.semesterTime = semesterTime;
     }
-
-    public static Semester getCurrentSemester() {
-//        if (currentSemester == null) {
-//            currentSemester = createCurrentSemester();
-//        }
-//        return currentSemester;
-        return new Semester(2025, SemesterTime.first);
-    }
 }

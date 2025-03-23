@@ -8,20 +8,17 @@ import com.kurierfree.server.domain.user.dao.UserRepository;
 import com.kurierfree.server.domain.user.domain.DisabledStudent;
 import com.kurierfree.server.domain.user.domain.Role;
 import com.kurierfree.server.domain.user.domain.Supporter;
-import com.kurierfree.server.domain.user.domain.User;
 import com.kurierfree.server.domain.user.dto.request.UserRegisterRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserService {
-    private final UserRepository userRepository;
     private final SupporterRepository supporterRepository;
     private final DisabledStudentRepository disabledStudentRepository;
     private final SemesterService semesterService;
 
-    public UserService(UserRepository userRepository, SupporterRepository supporterRepository, DisabledStudentRepository disabledStudentRepository, SemesterService semesterService) {
-        this.userRepository = userRepository;
+    public UserService(SupporterRepository supporterRepository, DisabledStudentRepository disabledStudentRepository, SemesterService semesterService) {
         this.supporterRepository = supporterRepository;
         this.disabledStudentRepository = disabledStudentRepository;
         this.semesterService = semesterService;
