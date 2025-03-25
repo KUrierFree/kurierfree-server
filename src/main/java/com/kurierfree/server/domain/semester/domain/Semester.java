@@ -2,12 +2,13 @@ package com.kurierfree.server.domain.semester.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
 @Entity
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "semester")
 public class Semester {
@@ -22,10 +23,22 @@ public class Semester {
     @Column(nullable = false)
     private SemesterTime semesterTime;
 
-    private static Semester currentSemester;
+    public Semester(int currentYear, SemesterTime currentSemesterTime) {
+        this.year = currentYear;
+        this.semesterTime = currentSemesterTime;
+    }
 
-    public Semester(int year, SemesterTime semesterTime) {
-        this.year = year;
-        this.semesterTime = semesterTime;
+    // 현재 시간을 기반 semester 를 생성
+    public static Semester createCurrentSemester() {
+        LocalDate currentDate = LocalDate.now();
+        int currentYear = currentDate.getYear();
+        SemesterTime currentSemesterTime;
+
+        if (currentDate.getMonthValue() <= 8){
+            currentSemesterTime = SemesterTime.SPRING;
+        } else{
+            currentSemesterTime = SemesterTime.FALL;
+        }
+        return new Semester(currentYear, currentSemesterTime);
     }
 }
