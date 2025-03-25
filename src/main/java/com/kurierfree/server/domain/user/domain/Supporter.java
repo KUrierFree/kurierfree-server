@@ -1,7 +1,7 @@
 package com.kurierfree.server.domain.user.domain;
 
 import com.kurierfree.server.domain.semester.domain.Semester;
-import com.kurierfree.server.domain.user.domain.enums.ApplicationStatus;
+import com.kurierfree.server.domain.user.domain.enums.Status;
 import com.kurierfree.server.domain.user.domain.enums.Gender;
 import com.kurierfree.server.domain.user.domain.enums.Role;
 import jakarta.persistence.*;
@@ -17,15 +17,10 @@ import lombok.NoArgsConstructor;
 @Table(name = "supporter")
 public class Supporter extends User{
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "semester_id", nullable = false)
-    private Semester semester;
-
     @Column(nullable = false)
-    private ApplicationStatus status = ApplicationStatus.PENDING;
+    private Status status = Status.PENDING;
 
     public Supporter(int studentId, String name, String department, Gender gender, String grade, String password, Role role, Semester semester) {
-        super(studentId, name, department, gender, grade, password, role);
-        this.semester = semester;
+        super(studentId, name, department, gender, grade, password, role, semester);
     }
 }
