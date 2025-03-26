@@ -1,5 +1,6 @@
 package com.kurierfree.server.domain.user.application;
 
+import com.kurierfree.server.domain.auth.constant.JwtGrantType;
 import com.kurierfree.server.domain.auth.domain.JwtToken;
 import com.kurierfree.server.domain.auth.infra.JwtGenerator;
 import com.kurierfree.server.domain.auth.infra.JwtProvider;
@@ -102,7 +103,7 @@ public class UserService {
         User user = userRepository.findByStudentId(userLoginRequest.getStudentId())
                 .orElseThrow(() -> new EntityNotFoundException("해당 아이디를 가진 사용자가 존재하지 않습니다."));
 
-        JwtToken jwtToken = jwtGenerator.generateToken(user.getId());
+        JwtToken jwtToken = jwtGenerator.generateToken(user.getId(), JwtGrantType.GRANT_TYPE_USER.getValue());
 
         if (!passwordEncoder.matches(userLoginRequest.getPassword(), user.getPassword())){
             throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");

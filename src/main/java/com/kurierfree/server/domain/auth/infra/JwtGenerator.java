@@ -10,11 +10,12 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import static com.kurierfree.server.domain.auth.constant.JwtGrantType.GRANT_TYPE_USER;
+import static com.kurierfree.server.domain.auth.constant.JwtTokenExpireTime.ACCESS_TOKEN_EXPIRE_TIME;
+import static com.kurierfree.server.domain.auth.constant.JwtTokenExpireTime.REFRESH_TOKEN_EXPIRE_TIME;
+
 @Component
 public class JwtGenerator {
-    private static final long ACCESS_TOKEN_EXPIRE_TIME = 86400000;
-    private static final long REFRESH_TOKEN_EXPIRE_TIME = 86400000;
-    private static final String GRANT_TYPE = "USER";
 
     private final Key key;
 
@@ -25,13 +26,13 @@ public class JwtGenerator {
     }
 
     // Member 정보를 가지고 AccessToken, RefreshToken을 생성하는 메서드
-    public JwtToken generateToken(Long userId) {
+    public JwtToken generateToken(Long userId, String grantType) {
         // 권한 가져오기
 
         long now = (new Date()).getTime();
 
         // Access Token 생성
-        Date accessTokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
+        Date accessTokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME.getExpireTime());
 
         String accessToken = Jwts.builder()
                 .setSubject(String.valueOf(userId))
@@ -42,12 +43,12 @@ public class JwtGenerator {
 
         // Refresh Token 생성
         String refreshToken = Jwts.builder()
-                .setExpiration(new Date(now + REFRESH_TOKEN_EXPIRE_TIME))
+                .setExpiration(new Date(now + REFRESH_TOKEN_EXPIRE_TIME.getExpireTime()))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
         return JwtToken.builder()
-                .grantType(GRANT_TYPE)
+                .grantType(grantType)
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .build();

@@ -71,7 +71,6 @@ public class JwtProvider {
         return false;
     }
 
-
     // accessToken
     private Claims parseClaims(String accessToken) {
         try {
