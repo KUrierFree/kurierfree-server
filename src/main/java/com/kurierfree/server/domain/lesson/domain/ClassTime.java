@@ -6,8 +6,12 @@ import lombok.Getter;
 @Embeddable
 @Getter
 public class ClassTime {
-    private final int hour;
-    private final int minute;
+    private int hour;
+    private int minute;
+
+    // 임베디드 클래스를 사용할 때는 기본 생성자가 반드시 필요
+    // JPA가 리플렉션(reflection)을 통해 객체를 생성할 수 있도록 하기 위해
+    public ClassTime(){} // 기본 생성자 추가
 
     private ClassTime(int hour, int minute) {
         this.hour = hour;
