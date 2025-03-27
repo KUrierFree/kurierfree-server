@@ -30,12 +30,18 @@ public class Lesson {
     @Column(nullable = false)
     private ClassDay classDay;
 
-    @Column(nullable = false)
     @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "hour", column = @Column(name = "start_hour", nullable = false)),
+            @AttributeOverride(name = "minute", column = @Column(name = "start_minute", nullable = false))
+    })
     private ClassTime startTime;
 
-    @Column(nullable = false)
     @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "hour", column = @Column(name = "end_hour", nullable = false)),
+            @AttributeOverride(name = "minute", column = @Column(name = "end_minute", nullable = false))
+    })
     private ClassTime endTime;
 
     @Builder
