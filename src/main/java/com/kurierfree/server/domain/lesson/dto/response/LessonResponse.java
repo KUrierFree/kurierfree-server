@@ -1,7 +1,6 @@
 package com.kurierfree.server.domain.lesson.dto.response;
 
 import com.kurierfree.server.domain.lesson.domain.ClassDay;
-import com.kurierfree.server.domain.lesson.domain.ClassTime;
 import com.kurierfree.server.domain.lesson.domain.Lesson;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,8 +14,8 @@ public class LessonResponse {
     private String subject;
     private String professor;
     private ClassDay classDay;
-    private ClassTime startTime;
-    private ClassTime endTime;
+    private String startTime;
+    private String endTime;
 
     public static LessonResponse from(Lesson lesson) {
         return LessonResponse.builder()
@@ -24,8 +23,8 @@ public class LessonResponse {
                 .subject(lesson.getSubject())
                 .professor(lesson.getProfessor())
                 .classDay(lesson.getClassDay())
-                .startTime(lesson.getStartTime())
-                .endTime(lesson.getEndTime())
+                .startTime(lesson.getStartTime().toString())
+                .endTime(lesson.getEndTime().toString())
                 .build();
     }
 }
