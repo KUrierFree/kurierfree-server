@@ -13,6 +13,7 @@ public class LessonResponse {
     private Long id;
     private String subject;
     private String professor;
+    private String classroom;
     private ClassDay classDay;
     private String startTime;
     private String endTime;
@@ -22,6 +23,7 @@ public class LessonResponse {
                 .id(lesson.getId())
                 .subject(lesson.getSubject())
                 .professor(lesson.getProfessor())
+                .classroom(lesson.getClassroom())
                 .classDay(lesson.getClassDay())
                 .startTime(lesson.getStartTime().toString())
                 .endTime(lesson.getEndTime().toString())

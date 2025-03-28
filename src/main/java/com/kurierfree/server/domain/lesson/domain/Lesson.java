@@ -28,6 +28,9 @@ public class Lesson {
     private String professor;
 
     @Column(nullable = false)
+    private String classroom;
+
+    @Column(nullable = false)
     private ClassDay classDay;
 
     @Embedded
@@ -45,19 +48,21 @@ public class Lesson {
     private ClassTime endTime;
 
     @Builder
-    private Lesson(TimeTable timeTable, String subject, String professor, ClassDay classDay, ClassTime startTime, ClassTime endTime) {
+    private Lesson(TimeTable timeTable, String subject, String professor, String classroom, ClassDay classDay, ClassTime startTime, ClassTime endTime) {
         this.timeTable = timeTable;
         this.subject = subject;
         this.professor = professor;
+        this.classroom = classroom;
         this.classDay = classDay;
         this.startTime = startTime;
         this.endTime = endTime;
     }
 
-    public static Lesson of(String subject, String professor, ClassDay classDay, ClassTime startTime, ClassTime endTime) {
+    public static Lesson of(String subject, String professor, String classroom, ClassDay classDay, ClassTime startTime, ClassTime endTime) {
         return Lesson.builder()
                 .subject(subject)
                 .professor(professor)
+                .classroom(classroom)
                 .classDay(classDay)
                 .startTime(startTime)
                 .endTime(endTime)
