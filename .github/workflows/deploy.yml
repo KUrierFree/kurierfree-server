@@ -22,6 +22,12 @@ jobs:
     - name: Gradle 빌드
       run: ./gradlew clean build -x test
 
+             # Docker 이미지를 빌드하기 전에 정리 단계 추가
+    - name: Clean up Docker to free space
+      run: |
+        docker system prune -f
+        docker volume prune -f
+
     - name: Docker 빌드 및 푸시
       run: |
         docker build -t ${{ secrets.DOCKER_USERNAME }}/kurierfree_server .
