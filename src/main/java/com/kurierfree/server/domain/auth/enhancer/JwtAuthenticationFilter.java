@@ -12,11 +12,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.GenericFilterBean;
 
+import static com.kurierfree.server.domain.auth.constant.JwtGrantType.GRANT_TYPE_ADMIN;
+import static com.kurierfree.server.domain.auth.constant.JwtGrantType.GRANT_TYPE_USER;
+
 
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends GenericFilterBean {
     private final JwtProvider jwtTokenProvider;
-    private static final String GRANT_TYPE = "user";
+
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -37,7 +40,9 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
     // Request Header에서 토큰 정보 추출
     private String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(GRANT_TYPE)) {
+        if (StringUtils.hasText(bearerToken) &&
+                ((bearerToken.startsWith(GRANT_TYPE_USER.getValue())) || (bearerToken.startsWith(GRANT_TYPE_ADMIN.getValue())))
+        ) {
             return bearerToken.substring(7);
         }
         return null;

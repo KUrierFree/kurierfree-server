@@ -1,5 +1,8 @@
 package com.kurierfree.server.domain.user.domain.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum DisabilityType {
     PHYSICAL_DISABILITY("지체장애"),
     HEARING_DISABILITY("청각장애"),
@@ -11,10 +14,6 @@ public enum DisabilityType {
 
     DisabilityType(String description) {
         this.description = description;
-    }
-
-    public String getDescription() {
-        return description;
     }
 
 }
