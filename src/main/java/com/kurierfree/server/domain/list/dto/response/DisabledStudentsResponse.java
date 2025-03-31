@@ -10,7 +10,7 @@ import lombok.Getter;
 @Getter
 @Builder
 @AllArgsConstructor
-public class DisabledStudentResponse {
+public class DisabledStudentsResponse {
     private Long disabledStudentId;
     private String name;
     private String department;
