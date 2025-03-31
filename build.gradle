@@ -40,12 +40,14 @@ dependencies {
 	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.18.1'
 	annotationProcessor 'org.projectlombok:lombok'
 
-	implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2' // swagger
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	testRuntimeOnly 'com.h2database:h2'
+
 }
 
 tasks.named('test') {
