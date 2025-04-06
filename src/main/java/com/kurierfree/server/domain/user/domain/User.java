@@ -1,6 +1,5 @@
 package com.kurierfree.server.domain.user.domain;
 
-import com.kurierfree.server.domain.semester.domain.Semester;
 import com.kurierfree.server.domain.user.domain.enums.Gender;
 import com.kurierfree.server.domain.user.domain.enums.Role;
 import jakarta.persistence.*;
@@ -40,11 +39,7 @@ public class User {
     @Column(nullable = false)
     private Role role;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "semester_id", nullable = false)
-    private Semester semester;
-
-    public User(int studentId, String name, String department, Gender gender, String grade, String password, Role role, Semester semester) {
+    public User(int studentId, String name, String department, Gender gender, String grade, String password, Role role) {
         this.studentId = studentId;
         this.name = name;
         this.department = department;
@@ -52,6 +47,5 @@ public class User {
         this.gender = gender;
         this.password = password;
         this.role = role;
-        this.semester = semester;
     }
 }
