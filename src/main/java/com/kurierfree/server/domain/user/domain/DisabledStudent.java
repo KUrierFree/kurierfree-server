@@ -1,6 +1,5 @@
 package com.kurierfree.server.domain.user.domain;
 
-import com.kurierfree.server.domain.semester.domain.Semester;
 import com.kurierfree.server.domain.user.domain.enums.Status;
 import com.kurierfree.server.domain.user.domain.enums.DisabilityType;
 import com.kurierfree.server.domain.user.domain.enums.Gender;
@@ -28,8 +27,8 @@ public class DisabledStudent extends User{
     @JoinColumn(name = "preferred_supporter_id")
     private Supporter preferredSupporter;
 
-    public DisabledStudent(int studentId, String name, String department, Gender gender, String grade, String password, Role role, Semester semester, DisabilityType disabilityType) {
-        super(studentId, name, department, gender, grade, password, role, semester);
+    public DisabledStudent(int studentId, String name, String department, Gender gender, String grade, String password, Role role, DisabilityType disabilityType) {
+        super(studentId, name, department, gender, grade, password, role);
         this.disabilityType = disabilityType;
     }
 }

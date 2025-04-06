@@ -1,6 +1,5 @@
 package com.kurierfree.server.domain.user.domain;
 
-import com.kurierfree.server.domain.semester.domain.Semester;
 import com.kurierfree.server.domain.user.domain.enums.Status;
 import com.kurierfree.server.domain.user.domain.enums.Gender;
 import com.kurierfree.server.domain.user.domain.enums.Role;
@@ -21,8 +20,8 @@ public class Supporter extends User{
     @Column(nullable = false)
     private Status status = Status.PENDING;
 
-    public Supporter(int studentId, String name, String department, Gender gender, String grade, String password, Role role, Semester semester) {
-        super(studentId, name, department, gender, grade, password, role, semester);
+    public Supporter(int studentId, String name, String department, Gender gender, String grade, String password, Role role) {
+        super(studentId, name, department, gender, grade, password, role);
     }
 
     public void updateStatus(Status status) {
