@@ -1,17 +1,20 @@
 package com.kurierfree.server.domain.list.application;
 
 import com.kurierfree.server.domain.auth.infra.JwtProvider;
+import com.kurierfree.server.domain.list.dto.request.SupporterStatusUpdateRequest;
 import com.kurierfree.server.domain.list.dto.response.DisabledStudentResponse;
 import com.kurierfree.server.domain.list.dto.response.SupporterListItemResponse;
 import com.kurierfree.server.domain.list.dto.response.SupporterResponse;
 import com.kurierfree.server.domain.user.dao.DisabledStudentRepository;
 import com.kurierfree.server.domain.user.dao.SupporterRepository;
 import com.kurierfree.server.domain.user.dao.UserRepository;
+import com.kurierfree.server.domain.user.domain.Supporter;
 import com.kurierfree.server.domain.user.domain.User;
 import com.kurierfree.server.domain.user.domain.enums.Role;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -54,6 +57,17 @@ public class ListService {
         return supporterRepository.findAppliedSupportersForAdmin();
     }
 
+
+    @Transactional
+    public void updateSupporterStatus(String token, SupporterStatusUpdateRequest request) {
+        checkRoleIsAdmin(token);
+
+        Supporter supporter = supporterRepository.findById(request.getSupporterId())
+                .orElseThrow(()->new EntityNotFoundException("서포터즈를 찾을 수 없습니다."));
+
+        supporter.updateStatus(request.getStatus());
+    }
+
     private void checkRoleIsAdmin(String token) {
         String jwtToken = token.substring(7);
         Long userId = jwtProvider.getUserIdFromToken(jwtToken);
@@ -65,6 +79,5 @@ public class ListService {
             throw new AccessDeniedException("관리자만 접근할 수 있습니다.");
         }
     }
-
 
 }

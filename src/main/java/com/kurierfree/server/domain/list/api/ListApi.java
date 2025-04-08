@@ -1,6 +1,7 @@
 package com.kurierfree.server.domain.list.api;
 
 import com.kurierfree.server.domain.list.application.ListService;
+import com.kurierfree.server.domain.list.dto.request.SupporterStatusUpdateRequest;
 import com.kurierfree.server.domain.list.dto.response.DisabledStudentResponse;
 import com.kurierfree.server.domain.list.dto.response.SupporterListItemResponse;
 import com.kurierfree.server.domain.list.dto.response.SupporterResponse;
@@ -12,6 +13,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -78,6 +80,23 @@ public class ListApi {
             List<SupporterListItemResponse> matchedSupporterResponses = listService.getAppliedSupportersForAdmin(token);
             return ResponseEntity.ok(matchedSupporterResponses);
         } catch (AccessDeniedException e){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        } catch (EntityNotFoundException e){
+            return ResponseEntity.notFound().build();
+        } catch (IllegalStateException e){
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @Operation(summary = "서포터즈 상태 변경",
+            description = "서포터즈 선발 or 탈락 상태 변경")
+    @PutMapping("/supporters/status")
+    public ResponseEntity<?> updateSupporterStatus(@RequestHeader("Authorization") String token,
+                                                   @RequestBody SupporterStatusUpdateRequest request){
+        try{
+            listService.updateSupporterStatus(token, request);
+            return ResponseEntity.ok(Map.of("message", "서포터즈 상태가 성공적으로 업데이트되었습니다."));
+        }catch (AccessDeniedException e){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         } catch (EntityNotFoundException e){
             return ResponseEntity.notFound().build();
