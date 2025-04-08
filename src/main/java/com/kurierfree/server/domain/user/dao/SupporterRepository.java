@@ -1,6 +1,6 @@
 package com.kurierfree.server.domain.user.dao;
 
-import com.kurierfree.server.domain.list.dto.response.MatchedSupporterResponse;
+import com.kurierfree.server.domain.list.dto.response.SupporterListItemResponse;
 import com.kurierfree.server.domain.list.dto.response.SupporterResponse;
 import com.kurierfree.server.domain.user.domain.Supporter;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -26,5 +26,5 @@ public interface SupporterRepository extends JpaRepository<Supporter, Long> {
         FROM Supporter s
         WHERE s.status = com.kurierfree.server.domain.user.domain.enums.Status.MATCHED
     """)
-    List<MatchedSupporterResponse> findMatchedSupportersForAdmin();
+    List<SupporterListItemResponse> findMatchedSupportersForAdmin();
 }

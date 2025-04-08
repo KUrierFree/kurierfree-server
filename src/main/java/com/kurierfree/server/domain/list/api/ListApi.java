@@ -2,7 +2,7 @@ package com.kurierfree.server.domain.list.api;
 
 import com.kurierfree.server.domain.list.application.ListService;
 import com.kurierfree.server.domain.list.dto.response.DisabledStudentResponse;
-import com.kurierfree.server.domain.list.dto.response.MatchedSupporterResponse;
+import com.kurierfree.server.domain.list.dto.response.SupporterListItemResponse;
 import com.kurierfree.server.domain.list.dto.response.SupporterResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.persistence.EntityNotFoundException;
@@ -55,9 +55,9 @@ public class ListApi {
 
     @Operation(summary = "매칭된 서포터즈 명단 조회")
     @GetMapping("/supporters/matched")
-    public ResponseEntity<List<MatchedSupporterResponse>> getMatchedSupporterList(@RequestHeader("Authorization") String token){
+    public ResponseEntity<List<SupporterListItemResponse>> getMatchedSupporterList(@RequestHeader("Authorization") String token){
         try{
-            List<MatchedSupporterResponse> matchedSupporterResponses = listService.getMatchedSupportersForAdmin(token);
+            List<SupporterListItemResponse> matchedSupporterResponses = listService.getMatchedSupportersForAdmin(token);
             return ResponseEntity.ok(matchedSupporterResponses);
         } catch (AccessDeniedException e){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();

@@ -2,7 +2,7 @@ package com.kurierfree.server.domain.list.application;
 
 import com.kurierfree.server.domain.auth.infra.JwtProvider;
 import com.kurierfree.server.domain.list.dto.response.DisabledStudentResponse;
-import com.kurierfree.server.domain.list.dto.response.MatchedSupporterResponse;
+import com.kurierfree.server.domain.list.dto.response.SupporterListItemResponse;
 import com.kurierfree.server.domain.list.dto.response.SupporterResponse;
 import com.kurierfree.server.domain.user.dao.DisabledStudentRepository;
 import com.kurierfree.server.domain.user.dao.SupporterRepository;
@@ -42,7 +42,7 @@ public class ListService {
         return supporterRepository.findAllForAdmin();
     }
 
-    public List<MatchedSupporterResponse> getMatchedSupportersForAdmin(String token) {
+    public List<SupporterListItemResponse> getMatchedSupportersForAdmin(String token) {
         checkRoleIsAdmin(token);
 
         return supporterRepository.findMatchedSupportersForAdmin();

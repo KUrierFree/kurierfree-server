@@ -8,7 +8,7 @@ import lombok.Getter;
 @Getter
 @Builder
 @AllArgsConstructor
-public class MatchedSupporterResponse {
+public class SupporterListItemResponse {
     private Long supporterId;
     private String name;
     private String department;
