@@ -31,4 +31,8 @@ public class DisabledStudent extends User{
         super(studentId, name, department, gender, grade, password, role);
         this.disabilityType = disabilityType;
     }
+
+    public void updateStatusMatched() {
+        this.status = Status.MATCHED;
+    }
 }

@@ -8,6 +8,6 @@ import lombok.Getter;
 @Builder
 @AllArgsConstructor
 public class MatchingRequest {
-    private Long SupporterId;
+    private Long supporterId;
     private Long disabledStudentId;
 }
