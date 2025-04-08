@@ -51,7 +51,7 @@ public class ListService {
     public List<SupporterListItemResponse> getPendingSupportersForAdmin(String token) {
         checkRoleIsAdmin(token);
 
-        return supporterRepository.findPendingSupportersForAdmin();
+        return supporterRepository.findAppliedSupportersForAdmin();
     }
 
     private void checkRoleIsAdmin(String token) {
