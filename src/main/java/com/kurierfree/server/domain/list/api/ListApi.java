@@ -2,16 +2,14 @@ package com.kurierfree.server.domain.list.api;
 
 import com.kurierfree.server.domain.list.application.ListService;
 import com.kurierfree.server.domain.list.dto.response.DisabledStudentResponse;
+import com.kurierfree.server.domain.list.dto.response.MatchedSupporterResponse;
 import com.kurierfree.server.domain.list.dto.response.SupporterResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -40,8 +38,7 @@ public class ListApi {
         }
     }
 
-
-    // 서포터즈 명단 조회 /supporters
+    @Operation(summary = "전체 서포터즈 명단 조회")
     @GetMapping("/supporters")
     public ResponseEntity<List<SupporterResponse>> getSupporterList(@RequestHeader("Authorization") String token) {
         try {
@@ -56,4 +53,18 @@ public class ListApi {
         }
     }
 
+    @Operation(summary = "매칭된 서포터즈 명단 조회")
+    @GetMapping("/supporters/matched")
+    public ResponseEntity<List<MatchedSupporterResponse>> getMatchedSupporterList(@RequestHeader("Authorization") String token){
+        try{
+            List<MatchedSupporterResponse> matchedSupporterResponses = listService.getMatchedSupportersForAdmin(token);
+            return ResponseEntity.ok(matchedSupporterResponses);
+        } catch (AccessDeniedException e){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        } catch (EntityNotFoundException e){
+            return ResponseEntity.notFound().build();
+        } catch (IllegalStateException e){
+            return ResponseEntity.internalServerError().build();
+        }
+    }
 }
