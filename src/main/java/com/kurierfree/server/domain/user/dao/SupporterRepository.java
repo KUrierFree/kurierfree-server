@@ -12,10 +12,10 @@ public interface SupporterRepository extends JpaRepository<Supporter, Long> {
 
     @Query("""
     SELECT new com.kurierfree.server.domain.list.dto.response.SupporterResponse(
-        s.id, s.name, s.department, s.gender, s.status
+        s.id, s.name, s.department, s.gender,
+        CASE WHEN s.status = com.kurierfree.server.domain.user.domain.enums.Status.MATCHED THEN true ELSE false END
     )
     FROM Supporter s
-
 """)
     List<SupporterResponse> findAllForAdmin();
 
@@ -33,7 +33,10 @@ public interface SupporterRepository extends JpaRepository<Supporter, Long> {
             s.id, s.name, s.department, s.gender, s.grade
         )
         FROM Supporter s
-        WHERE s.status = com.kurierfree.server.domain.user.domain.enums.Status.PENDING
+            WHERE s.status IN (
+           com.kurierfree.server.domain.user.domain.enums.Status.PENDING,
+           com.kurierfree.server.domain.user.domain.enums.Status.REJECTED
+       )
     """)
-    List<SupporterListItemResponse> findPendingSupportersForAdmin();
+    List<SupporterListItemResponse> findAppliedSupportersForAdmin();
 }
