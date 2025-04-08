@@ -3,6 +3,7 @@ package com.kurierfree.server.domain.user.dao;
 import com.kurierfree.server.domain.list.dto.response.SupporterListItemResponse;
 import com.kurierfree.server.domain.list.dto.response.SupporterResponse;
 import com.kurierfree.server.domain.user.domain.Supporter;
+import com.kurierfree.server.domain.user.domain.enums.Status;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -23,7 +24,7 @@ public interface SupporterRepository extends JpaRepository<Supporter, Long> {
 
     @Query("""
         SELECT new com.kurierfree.server.domain.list.dto.response.SupporterListItemResponse(
-            s.id, s.name, s.department, s.gender, s.grade
+            s.id, s.name, s.department, s.gender, s.grade, s.status
         )
         FROM Supporter s
             WHERE s.status IN (
@@ -34,7 +35,7 @@ public interface SupporterRepository extends JpaRepository<Supporter, Long> {
 
     @Query("""
         SELECT new com.kurierfree.server.domain.list.dto.response.SupporterListItemResponse(
-            s.id, s.name, s.department, s.gender, s.grade
+            s.id, s.name, s.department, s.gender, s.grade, s.status
         )
         FROM Supporter s
             WHERE s.status IN (
@@ -44,4 +45,7 @@ public interface SupporterRepository extends JpaRepository<Supporter, Long> {
        )
     """)
     List<SupporterListItemResponse> findAppliedSupportersForAdmin();
+
+    List<Supporter> findByStatus(Status status);
+
 }

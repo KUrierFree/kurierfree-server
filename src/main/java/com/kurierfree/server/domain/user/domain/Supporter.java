@@ -27,4 +27,8 @@ public class Supporter extends User{
     public void updateStatus(Status status) {
         this.status = status;
     }
+
+    public void changeToRejected() {
+        this.status = Status.REJECTED;
+    }
 }

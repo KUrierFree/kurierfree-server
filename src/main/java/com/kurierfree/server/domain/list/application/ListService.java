@@ -11,6 +11,7 @@ import com.kurierfree.server.domain.user.dao.UserRepository;
 import com.kurierfree.server.domain.user.domain.Supporter;
 import com.kurierfree.server.domain.user.domain.User;
 import com.kurierfree.server.domain.user.domain.enums.Role;
+import com.kurierfree.server.domain.user.domain.enums.Status;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -68,6 +69,19 @@ public class ListService {
         supporter.updateStatus(request.getStatus());
     }
 
+    @Transactional
+    public void finalizeSupportersForSemester(String token) {
+        checkRoleIsAdmin(token);
+
+        List<Supporter> matching = supporterRepository.findByStatus(Status.MATCHING);
+        List<Supporter> pending = supporterRepository.findByStatus(Status.PENDING);
+
+        // 아직 Pending으로 남아있던 애들 -> Rejected로 변경
+        pending.forEach(Supporter::changeToRejected);
+
+
+    }
+
     private void checkRoleIsAdmin(String token) {
         String jwtToken = token.substring(7);
         Long userId = jwtProvider.getUserIdFromToken(jwtToken);
@@ -79,5 +93,4 @@ public class ListService {
             throw new AccessDeniedException("관리자만 접근할 수 있습니다.");
         }
     }
-
 }

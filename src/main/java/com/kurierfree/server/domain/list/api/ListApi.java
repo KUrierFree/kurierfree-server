@@ -40,7 +40,8 @@ public class ListApi {
         }
     }
 
-    @Operation(summary = "확정된 서포터즈 명단 조회")
+    @Operation(summary = "확정된 서포터즈 명단 조회",
+    description = "matched - true / matching - false")
     @GetMapping("/supporters")
     public ResponseEntity<List<SupporterResponse>> getSupporterList(@RequestHeader("Authorization") String token) {
         try {
@@ -70,10 +71,23 @@ public class ListApi {
             return ResponseEntity.internalServerError().build();
         }
     }
+    @Operation(summary = "해당 학기 서포터즈 선택 완료 버튼")
+    @PostMapping("/supporters/finalize")
+    public ResponseEntity<?> finalizeSupporters(@RequestHeader("Authorization") String token){
+        try{
+            listService.finalizeSupportersForSemester(token);
+            return ResponseEntity.ok(Map.of("message", "해당 학기 서포터즈 선택이 완료되었습니다."));
+        } catch (AccessDeniedException e){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        } catch (EntityNotFoundException e){
+            return ResponseEntity.notFound().build();
+        } catch (IllegalStateException e){
+            return ResponseEntity.internalServerError().build();
+        }
+    }
 
     @Operation(summary = "서포터즈 지원자 명단 조회 ",
-            description = "status: Pending || Rejected || Matching 인 서포터즈 조회," +
-                    "매칭 전")
+            description = "status: Pending || Rejected || Matching 인 서포터즈 조회")
     @GetMapping("/supporters/applied")
     public ResponseEntity<List<SupporterListItemResponse>> getAppliedSupporterList(@RequestHeader("Authorization") String token){
         try{
