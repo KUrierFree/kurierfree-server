@@ -22,4 +22,7 @@ public class Supporter extends User{
     public Supporter(int studentId, String name, String department, Gender gender, String grade, String password, Role role) {
         super(studentId, name, department, gender, grade, password, role);
     }
+    public void updateStatusMatched() {
+        this.status = Status.MATCHED;
+    }
 }

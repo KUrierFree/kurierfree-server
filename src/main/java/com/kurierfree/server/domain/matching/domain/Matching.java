@@ -1,5 +1,6 @@
 package com.kurierfree.server.domain.matching.domain;
 
+import com.kurierfree.server.domain.matching.dto.response.MatchingResponse;
 import com.kurierfree.server.domain.semester.domain.Semester;
 import com.kurierfree.server.domain.user.domain.DisabledStudent;
 import com.kurierfree.server.domain.user.domain.Supporter;
@@ -31,9 +32,17 @@ public class Matching {
     private DisabledStudent disabledStudent;
 
     @Builder
-    public Matching(Semester semester, Supporter supporter, DisabledStudent disabledStudent) {
+    private Matching(Semester semester, Supporter supporter, DisabledStudent disabledStudent) {
         this.semester = semester;
         this.supporter = supporter;
         this.disabledStudent = disabledStudent;
+    }
+
+    public Matching of(Semester semester, Supporter supporter, DisabledStudent disabledStudent) {
+        return Matching.builder()
+                .semester(semester)
+                .supporter(supporter)
+                .disabledStudent(disabledStudent)
+                .build();
     }
 }
