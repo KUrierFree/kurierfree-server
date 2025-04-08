@@ -53,7 +53,8 @@ public class ListApi {
         }
     }
 
-    @Operation(summary = "매칭된 서포터즈 명단 조회 (status: MATCHED)")
+    @Operation(summary = "매칭된 서포터즈 명단 조회",
+            description = "status: MATCHED 인 서포터즈 조회")
     @GetMapping("/supporters/matched")
     public ResponseEntity<List<SupporterListItemResponse>> getMatchedSupporterList(@RequestHeader("Authorization") String token){
         try{
@@ -68,7 +69,8 @@ public class ListApi {
         }
     }
 
-    @Operation(summary = "지원한 서포터즈 명단 조회 (status: PENDING)")
+    @Operation(summary = "지원한 서포터즈 명단 조회 ",
+            description = "status: PENDING 인 서포터즈 조회")
     @GetMapping("/supporters/pending")
     public ResponseEntity<List<SupporterListItemResponse>> getPendingSupporterList(@RequestHeader("Authorization") String token){
         try{
