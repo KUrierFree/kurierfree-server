@@ -53,11 +53,26 @@ public class ListApi {
         }
     }
 
-    @Operation(summary = "매칭된 서포터즈 명단 조회")
+    @Operation(summary = "매칭된 서포터즈 명단 조회 (status: MATCHED)")
     @GetMapping("/supporters/matched")
     public ResponseEntity<List<SupporterListItemResponse>> getMatchedSupporterList(@RequestHeader("Authorization") String token){
         try{
             List<SupporterListItemResponse> matchedSupporterResponses = listService.getMatchedSupportersForAdmin(token);
+            return ResponseEntity.ok(matchedSupporterResponses);
+        } catch (AccessDeniedException e){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        } catch (EntityNotFoundException e){
+            return ResponseEntity.notFound().build();
+        } catch (IllegalStateException e){
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @Operation(summary = "지원한 서포터즈 명단 조회 (status: PENDING)")
+    @GetMapping("/supporters/pending")
+    public ResponseEntity<List<SupporterListItemResponse>> getPendingSupporterList(@RequestHeader("Authorization") String token){
+        try{
+            List<SupporterListItemResponse> matchedSupporterResponses = listService.getPendingSupportersForAdmin(token);
             return ResponseEntity.ok(matchedSupporterResponses);
         } catch (AccessDeniedException e){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();

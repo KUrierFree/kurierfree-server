@@ -48,6 +48,12 @@ public class ListService {
         return supporterRepository.findMatchedSupportersForAdmin();
     }
 
+    public List<SupporterListItemResponse> getPendingSupportersForAdmin(String token) {
+        checkRoleIsAdmin(token);
+
+        return supporterRepository.findPendingSupportersForAdmin();
+    }
+
     private void checkRoleIsAdmin(String token) {
         String jwtToken = token.substring(7);
         Long userId = jwtProvider.getUserIdFromToken(jwtToken);
