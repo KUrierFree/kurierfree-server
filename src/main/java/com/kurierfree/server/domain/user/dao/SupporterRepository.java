@@ -16,6 +16,8 @@ public interface SupporterRepository extends JpaRepository<Supporter, Long> {
         CASE WHEN s.status = com.kurierfree.server.domain.user.domain.enums.Status.MATCHED THEN true ELSE false END
     )
     FROM Supporter s
+    WHERE s.status = com.kurierfree.server.domain.user.domain.enums.Status.MATCHED
+    OR s.status = com.kurierfree.server.domain.user.domain.enums.Status.MATCHING
 """)
     List<SupporterResponse> findAllForAdmin();
 
@@ -24,9 +26,11 @@ public interface SupporterRepository extends JpaRepository<Supporter, Long> {
             s.id, s.name, s.department, s.gender, s.grade
         )
         FROM Supporter s
-        WHERE s.status = com.kurierfree.server.domain.user.domain.enums.Status.MATCHED
+            WHERE s.status IN (
+           com.kurierfree.server.domain.user.domain.enums.Status.MATCHING
+       )
     """)
-    List<SupporterListItemResponse> findMatchedSupportersForAdmin();
+    List<SupporterListItemResponse> findMatchingSupportersForAdmin();
 
     @Query("""
         SELECT new com.kurierfree.server.domain.list.dto.response.SupporterListItemResponse(
@@ -35,7 +39,8 @@ public interface SupporterRepository extends JpaRepository<Supporter, Long> {
         FROM Supporter s
             WHERE s.status IN (
            com.kurierfree.server.domain.user.domain.enums.Status.PENDING,
-           com.kurierfree.server.domain.user.domain.enums.Status.REJECTED
+           com.kurierfree.server.domain.user.domain.enums.Status.REJECTED,
+           com.kurierfree.server.domain.user.domain.enums.Status.MATCHING
        )
     """)
     List<SupporterListItemResponse> findAppliedSupportersForAdmin();

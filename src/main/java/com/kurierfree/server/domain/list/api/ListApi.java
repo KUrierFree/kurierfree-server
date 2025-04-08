@@ -38,7 +38,7 @@ public class ListApi {
         }
     }
 
-    @Operation(summary = "전체 서포터즈 명단 조회")
+    @Operation(summary = "확정된 서포터즈 명단 조회")
     @GetMapping("/supporters")
     public ResponseEntity<List<SupporterResponse>> getSupporterList(@RequestHeader("Authorization") String token) {
         try {
@@ -53,12 +53,12 @@ public class ListApi {
         }
     }
 
-    @Operation(summary = "매칭된 서포터즈 명단 조회",
-            description = "status: MATCHED 인 서포터즈 조회")
-    @GetMapping("/supporters/matched")
-    public ResponseEntity<List<SupporterListItemResponse>> getMatchedSupporterList(@RequestHeader("Authorization") String token){
+    @Operation(summary = "선발된 서포터즈 명단 조회",
+            description = "status: Matching 인 서포터즈 조회")
+    @GetMapping("/supporters/matching")
+    public ResponseEntity<List<SupporterListItemResponse>> getMatchingSupporterList(@RequestHeader("Authorization") String token){
         try{
-            List<SupporterListItemResponse> matchedSupporterResponses = listService.getMatchedSupportersForAdmin(token);
+            List<SupporterListItemResponse> matchedSupporterResponses = listService.getMatchingSupportersForAdmin(token);
             return ResponseEntity.ok(matchedSupporterResponses);
         } catch (AccessDeniedException e){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -69,12 +69,13 @@ public class ListApi {
         }
     }
 
-    @Operation(summary = "지원한 서포터즈 명단 조회 ",
-            description = "status: PENDING 인 서포터즈 조회")
-    @GetMapping("/supporters/pending")
-    public ResponseEntity<List<SupporterListItemResponse>> getPendingSupporterList(@RequestHeader("Authorization") String token){
+    @Operation(summary = "서포터즈 지원자 명단 조회 ",
+            description = "status: Pending || Rejected || Matching 인 서포터즈 조회," +
+                    "매칭 전")
+    @GetMapping("/supporters/applied")
+    public ResponseEntity<List<SupporterListItemResponse>> getAppliedSupporterList(@RequestHeader("Authorization") String token){
         try{
-            List<SupporterListItemResponse> matchedSupporterResponses = listService.getPendingSupportersForAdmin(token);
+            List<SupporterListItemResponse> matchedSupporterResponses = listService.getAppliedSupportersForAdmin(token);
             return ResponseEntity.ok(matchedSupporterResponses);
         } catch (AccessDeniedException e){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();

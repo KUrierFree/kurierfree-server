@@ -42,13 +42,13 @@ public class ListService {
         return supporterRepository.findAllForAdmin();
     }
 
-    public List<SupporterListItemResponse> getMatchedSupportersForAdmin(String token) {
+    public List<SupporterListItemResponse> getMatchingSupportersForAdmin(String token) {
         checkRoleIsAdmin(token);
 
-        return supporterRepository.findMatchedSupportersForAdmin();
+        return supporterRepository.findMatchingSupportersForAdmin();
     }
 
-    public List<SupporterListItemResponse> getPendingSupportersForAdmin(String token) {
+    public List<SupporterListItemResponse> getAppliedSupportersForAdmin(String token) {
         checkRoleIsAdmin(token);
 
         return supporterRepository.findAppliedSupportersForAdmin();
