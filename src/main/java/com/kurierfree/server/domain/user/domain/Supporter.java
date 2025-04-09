@@ -32,4 +32,12 @@ public class Supporter extends User{
         this.supporterMatchCount += 1;
         return this.supporterMatchCount;
     }
+
+    public void updateStatus(Status status) {
+        this.status = status;
+    }
+
+    public void changeToRejected() {
+        this.status = Status.REJECTED;
+    }
 }
