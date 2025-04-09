@@ -10,7 +10,7 @@ import lombok.Getter;
 @Builder
 public class MatchingSupporters {
     private int rank;
-    private int studentId;
+    private Long supporterId;
     private String name;
     private String department;
     private Gender gender;
