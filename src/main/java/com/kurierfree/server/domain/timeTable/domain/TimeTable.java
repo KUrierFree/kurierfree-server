@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "time_table")
+@Table(name = "time_table", uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "semester_id"}))
 public class TimeTable {
 
     @Id

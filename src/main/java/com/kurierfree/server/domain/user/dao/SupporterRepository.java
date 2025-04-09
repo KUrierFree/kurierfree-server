@@ -48,4 +48,6 @@ public interface SupporterRepository extends JpaRepository<Supporter, Long> {
 
     List<Supporter> findByStatus(Status status);
 
+    @Query("SELECT d.id FROM Supporter d")
+    List<Long> findAllIds(); // 모든 장애학생 ID만 추출
 }

@@ -1,5 +1,6 @@
 package com.kurierfree.server.domain.timeTable.application;
 
+import com.kurierfree.server.domain.auth.enhancer.JwtAuthenticationFilter;
 import com.kurierfree.server.domain.auth.infra.JwtProvider;
 import com.kurierfree.server.domain.lesson.dao.LessonRepository;
 import com.kurierfree.server.domain.lesson.dto.response.LessonResponse;
@@ -28,10 +29,11 @@ public class TimeTableService {
     }
 
     @Transactional
-    public TimeTableResponse getTimeTable(String token) {
-        String jwtToken = token.substring(7);
-        Long userId = jwtProvider.getUserIdFromToken(jwtToken);
+    public TimeTableResponse getTimeTableWithUserId(Long userId) {
+        return getTimeTableResponse(userId);
+    }
 
+    private TimeTableResponse getTimeTableResponse(Long userId) {
         TimeTable timeTable= timeTableRepository.findByUserIdAndSemesterId(
                 userId, semesterService.getCurrentSemester().getId()
         );
@@ -48,6 +50,14 @@ public class TimeTableService {
         return TimeTableResponse.builder()
                 .lessons(lessonResponseList)
                 .build();
+    }
+
+    @Transactional
+    public TimeTableResponse getTimeTableWithToken(String token) {
+        String jwtToken = token.substring(7);
+        Long userId = jwtProvider.getUserIdFromToken(jwtToken);
+
+        return getTimeTableResponse(userId);
     }
 
 }
