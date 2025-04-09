@@ -2,6 +2,8 @@ package com.kurierfree.server.domain.user.dao;
 
 import com.kurierfree.server.domain.list.dto.response.SupporterResponse;
 import com.kurierfree.server.domain.user.domain.Supporter;
+import com.kurierfree.server.domain.user.domain.enums.Status;
+import com.nimbusds.openid.connect.sdk.assurance.IdentityAssuranceProcess;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -18,4 +20,8 @@ public interface SupporterRepository extends JpaRepository<Supporter, Long> {
 """)
     List<SupporterResponse> findAllForAdmin();
 
+    @Query("SELECT d.id FROM Supporter d")
+    List<Long> findAllIds(); // 모든 장애학생 ID만 추출
+
+    Status findStatusById(Long id);
 }
