@@ -12,13 +12,11 @@ import com.kurierfree.server.domain.user.dao.DisabledStudentRepository;
 import com.kurierfree.server.domain.user.dao.SupporterRepository;
 import com.kurierfree.server.domain.user.domain.DisabledStudent;
 import com.kurierfree.server.domain.user.domain.Supporter;
-import com.kurierfree.server.domain.user.domain.enums.Status;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -50,6 +48,9 @@ public class MatchingService {
                 supporter,
                 disabledStudent)
         );
+
+        // 매칭이 완료된 장애학생-서포터즈 조합의 스코어 정보는 삭제
+        matchingScoreCacheRepository.deleteBySupporterIdAndDisabledStudentId(supporter.getId(), disabledStudent.getId());
 
         if (supporter.updateAndGetSupporterMatchCount() == 2){
             supporter.updateStatusMatched();
