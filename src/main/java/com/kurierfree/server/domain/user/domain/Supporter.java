@@ -23,4 +23,12 @@ public class Supporter extends User{
     public Supporter(int studentId, String name, String department, Gender gender, String grade, String password, Role role, Semester semester) {
         super(studentId, name, department, gender, grade, password, role, semester);
     }
+
+    public void updateStatus(Status status) {
+        this.status = status;
+    }
+
+    public void changeToRejected() {
+        this.status = Status.REJECTED;
+    }
 }
