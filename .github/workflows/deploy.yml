@@ -19,6 +19,12 @@ jobs:
         distribution: 'temurin'
         java-version: '21'
 
+    - name:  Setup Environment
+      run: |
+        mkdir -p ./src/main/resources
+        touch ./src/main/resources/application.yml
+        echo -e "${{ secrets.APPLICATION }}" >> ./src/main/resources/application.yml
+
     - name: Gradle 빌드
       run: ./gradlew clean build -x test
 
