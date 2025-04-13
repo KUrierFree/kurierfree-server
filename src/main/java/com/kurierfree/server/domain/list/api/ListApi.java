@@ -41,7 +41,7 @@ public class ListApi {
     }
 
     @Operation(summary = "확정된 서포터즈 명단 조회",
-    description = "matched - true / matching - false")
+            description = "matched - true / matching - false")
     @GetMapping("/supporters")
     public ResponseEntity<List<SupporterResponse>> getSupporterList(@RequestHeader("Authorization") String token) {
         try {
@@ -59,29 +59,30 @@ public class ListApi {
     @Operation(summary = "선발된 서포터즈 명단 조회",
             description = "status: Matching 인 서포터즈 조회")
     @GetMapping("/supporters/matching")
-    public ResponseEntity<List<SupporterListItemResponse>> getMatchingSupporterList(@RequestHeader("Authorization") String token){
-        try{
+    public ResponseEntity<List<SupporterListItemResponse>> getMatchingSupporterList(@RequestHeader("Authorization") String token) {
+        try {
             List<SupporterListItemResponse> matchedSupporterResponses = listService.getMatchingSupportersForAdmin(token);
             return ResponseEntity.ok(matchedSupporterResponses);
-        } catch (AccessDeniedException e){
+        } catch (AccessDeniedException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        } catch (EntityNotFoundException e){
+        } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
-        } catch (IllegalStateException e){
+        } catch (IllegalStateException e) {
             return ResponseEntity.internalServerError().build();
         }
     }
+
     @Operation(summary = "해당 학기 서포터즈 선택 완료 버튼")
     @PostMapping("/supporters/finalize")
-    public ResponseEntity<?> finalizeSupporters(@RequestHeader("Authorization") String token){
-        try{
+    public ResponseEntity<?> finalizeSupporters(@RequestHeader("Authorization") String token) {
+        try {
             listService.finalizeSupportersForSemester(token);
             return ResponseEntity.ok(Map.of("message", "해당 학기 서포터즈 선택이 완료되었습니다."));
-        } catch (AccessDeniedException e){
+        } catch (AccessDeniedException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        } catch (EntityNotFoundException e){
+        } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
-        } catch (IllegalStateException e){
+        } catch (IllegalStateException e) {
             return ResponseEntity.internalServerError().build();
         }
     }
@@ -89,15 +90,15 @@ public class ListApi {
     @Operation(summary = "서포터즈 지원자 명단 조회 ",
             description = "status: Pending || Rejected || Matching 인 서포터즈 조회")
     @GetMapping("/supporters/applied")
-    public ResponseEntity<List<SupporterListItemResponse>> getAppliedSupporterList(@RequestHeader("Authorization") String token){
-        try{
+    public ResponseEntity<List<SupporterListItemResponse>> getAppliedSupporterList(@RequestHeader("Authorization") String token) {
+        try {
             List<SupporterListItemResponse> matchedSupporterResponses = listService.getAppliedSupportersForAdmin(token);
             return ResponseEntity.ok(matchedSupporterResponses);
-        } catch (AccessDeniedException e){
+        } catch (AccessDeniedException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        } catch (EntityNotFoundException e){
+        } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
-        } catch (IllegalStateException e){
+        } catch (IllegalStateException e) {
             return ResponseEntity.internalServerError().build();
         }
     }
@@ -106,15 +107,15 @@ public class ListApi {
             description = "서포터즈 선발 or 탈락 상태 변경")
     @PutMapping("/supporters/status")
     public ResponseEntity<?> updateSupporterStatus(@RequestHeader("Authorization") String token,
-                                                   @RequestBody SupporterStatusUpdateRequest request){
-        try{
+                                                   @RequestBody SupporterStatusUpdateRequest request) {
+        try {
             listService.updateSupporterStatus(token, request);
             return ResponseEntity.ok(Map.of("message", "서포터즈 상태가 성공적으로 업데이트되었습니다."));
-        }catch (AccessDeniedException e){
+        } catch (AccessDeniedException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        } catch (EntityNotFoundException e){
+        } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
-        } catch (IllegalStateException e){
+        } catch (IllegalStateException e) {
             return ResponseEntity.internalServerError().build();
         }
     }
