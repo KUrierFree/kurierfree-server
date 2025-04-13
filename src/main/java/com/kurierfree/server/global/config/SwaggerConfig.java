@@ -34,6 +34,11 @@ public class SwaggerConfig {
         SecurityRequirement securityRequirement = new SecurityRequirement()
                 .addList("Bearer Token");
 
+
+        Server prodServer = new Server();
+        prodServer.setUrl("http://13.125.243.173:8080");
+        prodServer.setDescription("AWS EC2 서버");
+
         Server localServer = new Server();
         localServer.setUrl("http://localhost:8080");
         localServer.setDescription("Local server for testing");
@@ -41,7 +46,7 @@ public class SwaggerConfig {
         return new OpenAPI()
                 .components(new Components().addSecuritySchemes("Bearer Token", apiKey))
                 .addSecurityItem(securityRequirement)
-                .servers(List.of(localServer));}
+                .servers(List.of(localServer, prodServer));}
     ;
 
 }
