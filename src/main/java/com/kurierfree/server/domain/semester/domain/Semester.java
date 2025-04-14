@@ -20,6 +20,7 @@ public class Semester {
     @Column(nullable = false)
     private int year;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private SemesterTime semesterTime;
 
