@@ -22,11 +22,10 @@ jobs:
     - name:  Setup Environment
       run: |
         mkdir -p ./src/main/resources
-        touch ./src/main/resources/application.yml
         echo -e "${{ secrets.APPLICATION }}" >> ./src/main/resources/application.yml
 
     - name: Gradle 빌드
-      run: ./gradlew clean build -x test
+      run: ./gradlew clean bootJar -x test
 
              # Docker 이미지를 빌드하기 전에 정리 단계 추가
     - name: Clean up Docker to free space
