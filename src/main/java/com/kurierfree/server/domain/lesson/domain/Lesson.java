@@ -30,6 +30,7 @@ public class Lesson {
     @Column(nullable = false)
     private String classroom;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ClassDay classDay;
 
