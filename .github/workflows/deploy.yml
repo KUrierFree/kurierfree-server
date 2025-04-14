@@ -25,7 +25,7 @@ jobs:
         echo -e "${{ secrets.APPLICATION }}" >> ./src/main/resources/application.yml
 
     - name: Gradle 빌드
-      run: ./gradlew clean bootJar -x test
+      run: ./gradlew clean build -x test
 
              # Docker 이미지를 빌드하기 전에 정리 단계 추가
     - name: Clean up Docker to free space
