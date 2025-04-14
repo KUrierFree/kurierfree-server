@@ -14,11 +14,13 @@ import lombok.NoArgsConstructor;
 @Table(name = "disabled_student")
 public class DisabledStudent extends User{
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private DisabilityType disabilityType;
 
     private String specialRequirements;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Status status = Status.MATCHING;
 

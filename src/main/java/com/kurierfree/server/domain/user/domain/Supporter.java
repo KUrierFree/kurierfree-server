@@ -17,6 +17,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "supporter")
 public class Supporter extends User{
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Status status = Status.PENDING;
 
