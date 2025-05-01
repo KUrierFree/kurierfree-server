@@ -52,7 +52,7 @@ public class MatchingService {
         // 매칭이 완료된 장애학생-서포터즈 조합의 스코어 정보는 삭제
         matchingScoreCacheRepository.deleteBySupporterIdAndDisabledStudentId(supporter.getId(), disabledStudent.getId());
 
-        if (supporter.updateAndGetSupporterMatchCount() == 2){
+        if (!supporter.updateAndValidSupporterMatchCount()){
             supporter.updateStatusMatched();
 
             // 매칭이 끝난 서포터즈 -> 매칭 점수 계산 테이블에서 삭제

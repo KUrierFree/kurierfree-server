@@ -20,6 +20,9 @@ public class Supporter extends User{
     @Column(nullable = false)
     private Status status = Status.PENDING;
 
+    @Column(nullable = false)
+    private int matchingCount = 0;
+
     public Supporter(int studentId, String name, String department, Gender gender, String grade, String password, Role role) {
         super(studentId, name, department, gender, grade, password, role);
     }
@@ -30,5 +33,14 @@ public class Supporter extends User{
 
     public void changeToRejected() {
         this.status = Status.REJECTED;
+    }
+
+    public void updateStatusMatched() {
+        this.status = Status.MATCHED;
+    }
+
+    public boolean updateAndValidSupporterMatchCount() {
+        this.matchingCount = matchingCount + 1;
+        return matchingCount < 2;
     }
 }
