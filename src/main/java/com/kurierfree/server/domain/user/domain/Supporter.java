@@ -4,15 +4,13 @@ import com.kurierfree.server.domain.user.domain.enums.Status;
 import com.kurierfree.server.domain.user.domain.enums.Gender;
 import com.kurierfree.server.domain.user.domain.enums.Role;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
+@Getter
 @Table(name = "supporter")
 public class Supporter extends User{
 
@@ -21,7 +19,7 @@ public class Supporter extends User{
     private Status status = Status.PENDING;
 
     @Column(nullable = false)
-    private int matchingCount = 0;
+    private int supporterMatchCount = 0;
 
     public Supporter(int studentId, String name, String department, Gender gender, String grade, String password, Role role) {
         super(studentId, name, department, gender, grade, password, role);
@@ -40,7 +38,7 @@ public class Supporter extends User{
     }
 
     public boolean updateAndValidSupporterMatchCount() {
-        this.matchingCount = matchingCount + 1;
-        return matchingCount < 2;
+        this.supporterMatchCount = supporterMatchCount + 1;
+        return supporterMatchCount < 2;
     }
 }
