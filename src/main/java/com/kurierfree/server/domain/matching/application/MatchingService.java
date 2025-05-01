@@ -75,7 +75,7 @@ public class MatchingService {
 
                     return MatchingSupporters.builder()
                             .rank(matchingScoreCacheList.indexOf(matchingScoreCache) + 1) // 현재 인덱스를 rank로 사용
-                            .supporterId(disabledStudentsId)
+                            .supporterId(supporter.getId())
                             .name(supporter.getName())
                             .department(supporter.getDepartment())
                             .gender(supporter.getGender())
