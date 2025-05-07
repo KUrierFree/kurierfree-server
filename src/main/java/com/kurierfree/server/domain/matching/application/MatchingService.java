@@ -8,6 +8,7 @@ import com.kurierfree.server.domain.matching.dto.request.MatchingRequest;
 import com.kurierfree.server.domain.matching.dto.response.MatchingResponse;
 import com.kurierfree.server.domain.matching.dto.response.MatchingSupporters;
 import com.kurierfree.server.domain.semester.application.SemesterService;
+import com.kurierfree.server.domain.timeTable.application.TimeTableService;
 import com.kurierfree.server.domain.user.dao.DisabledStudentRepository;
 import com.kurierfree.server.domain.user.dao.SupporterRepository;
 import com.kurierfree.server.domain.user.domain.DisabledStudent;
@@ -26,13 +27,22 @@ public class MatchingService {
     private final DisabledStudentRepository disabledStudentRepository;
     private final SemesterService semesterService;
     private final MatchingScoreCacheRepository matchingScoreCacheRepository;
+    private final TimeTableService timeTableService;
 
-    public MatchingService(MatchingRepository matchingRepository, SupporterRepository supporterRepository, DisabledStudentRepository disabledStudentRepository, SemesterService semesterService, MatchingScoreCacheRepository matchingScoreCacheRepository) {
+    public MatchingService(
+            MatchingRepository matchingRepository,
+            SupporterRepository supporterRepository,
+            DisabledStudentRepository disabledStudentRepository,
+            SemesterService semesterService,
+            MatchingScoreCacheRepository matchingScoreCacheRepository,
+            TimeTableService timeTableService
+    ) {
         this.matchingRepository = matchingRepository;
         this.supporterRepository = supporterRepository;
         this.disabledStudentRepository = disabledStudentRepository;
         this.semesterService = semesterService;
         this.matchingScoreCacheRepository = matchingScoreCacheRepository;
+        this.timeTableService = timeTableService;
     }
 
     @Transactional
@@ -52,6 +62,7 @@ public class MatchingService {
         // 매칭이 완료된 장애학생-서포터즈 조합의 스코어 정보는 삭제
         matchingScoreCacheRepository.deleteBySupporterIdAndDisabledStudentId(supporter.getId(), disabledStudent.getId());
 
+        // 서포터즈가 2명의 장애학생과 매칭되었다면 매칭완료로 상태변경
         if (!supporter.updateAndValidSupporterMatchCount()){
             supporter.updateStatusMatched();
 
@@ -65,6 +76,7 @@ public class MatchingService {
 
     @Transactional
     public MatchingResponse getMatchingThirdPriorityOfDisabledStudent(Long disabledStudentsId) {
+        // 장애학생의 매칭 score 를 기준으로 내림차순 정렬한 list
         List<MatchingScoreCache> matchingScoreCacheList = matchingScoreCacheRepository.findByDisabledStudentIdOrderByScoreDesc(disabledStudentsId);
 
         List<MatchingSupporters> matchingSupportersList = matchingScoreCacheList.stream()
@@ -97,29 +109,36 @@ public class MatchingService {
         Supporter supporter = supporterRepository.findById(supporterId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 아이디를 가진 서포터즈가 존재하지 않습니다."));
 
-        // Todo: 사전 지정이라면 1순위로 만들기
-
         int score = 0;
 
+        // 사전 지정이라면 1순위로 만들기
+        boolean isPreferredSupporter = disabledStudent.isPreferredSupporter(supporterId);
+
         // Todo: 장애학생 수업시간 = 서포터즈 활동 가능시간인가
-        // Todo: 동일 과목 여부
+        // 동일 과목 수강 여부
+        int timeTableMatchScore = timeTableService.compareTimeTableScore(disabledStudentsId, supporterId);
 
         // 동일 성별 여부
-        boolean genderMatch = supporter.getGender() == disabledStudent.getGender();
+        boolean genderMatch = (supporter.getGender() == disabledStudent.getGender());
 
         // 같은 학과 여부
         boolean departmentMatch = supporter.getDepartment().equals(disabledStudent.getDepartment());
 
         // 점수 계산
+        if (isPreferredSupporter) score += 100;
         if (genderMatch) score += 3;
         if (departmentMatch) score += 1;
+        score += timeTableMatchScore;
+
 
         MatchingScoreCache matchingScoreCache = MatchingScoreCache.of(
                 disabledStudentsId,
                 supporterId,
                 score,
                 genderMatch,
-                departmentMatch
+                departmentMatch,
+                isPreferredSupporter,
+                timeTableMatchScore
                 );
 
         matchingScoreCacheRepository.save(matchingScoreCache);

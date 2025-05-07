@@ -35,4 +35,8 @@ public class DisabledStudent extends User{
     public void updateStatusMatched() {
         this.status = Status.MATCHED;
     }
+
+    public boolean isPreferredSupporter(Long supporterId) {
+        return this.preferredSupporter != null && this.preferredSupporter.getId().equals(supporterId);
+    }
 }

@@ -3,6 +3,7 @@ package com.kurierfree.server.domain.timeTable.application;
 import com.kurierfree.server.domain.auth.enhancer.JwtAuthenticationFilter;
 import com.kurierfree.server.domain.auth.infra.JwtProvider;
 import com.kurierfree.server.domain.lesson.dao.LessonRepository;
+import com.kurierfree.server.domain.lesson.domain.Lesson;
 import com.kurierfree.server.domain.lesson.dto.response.LessonResponse;
 import com.kurierfree.server.domain.semester.application.SemesterService;
 import com.kurierfree.server.domain.timeTable.dao.TimeTableRepository;
@@ -13,6 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class TimeTableService {
@@ -30,6 +34,14 @@ public class TimeTableService {
 
     @Transactional
     public TimeTableResponse getTimeTableWithUserId(Long userId) {
+        return getTimeTableResponse(userId);
+    }
+
+    @Transactional
+    public TimeTableResponse getTimeTableWithToken(String token) {
+        String jwtToken = token.substring(7);
+        Long userId = jwtProvider.getUserIdFromToken(jwtToken);
+
         return getTimeTableResponse(userId);
     }
 
@@ -52,12 +64,45 @@ public class TimeTableService {
                 .build();
     }
 
-    @Transactional
-    public TimeTableResponse getTimeTableWithToken(String token) {
-        String jwtToken = token.substring(7);
-        Long userId = jwtProvider.getUserIdFromToken(jwtToken);
+    public int compareTimeTableScore(Long disabledStudentId, Long supporterId) {
+        int score = 0;
 
-        return getTimeTableResponse(userId);
+        TimeTable disabledTimeTable= timeTableRepository.findByUserIdAndSemesterId(
+                disabledStudentId, semesterService.getCurrentSemester().getId()
+        );
+
+        TimeTable supporterTimeTable= timeTableRepository.findByUserIdAndSemesterId(
+                supporterId, semesterService.getCurrentSemester().getId()
+        );
+
+        List<Lesson> disabledLessons = lessonRepository.findByTimeTableId(disabledTimeTable.getId());
+        List<Lesson> supporterLessons = lessonRepository.findByTimeTableId(supporterTimeTable.getId());
+
+        Set<Long> supporterLessonIds = supporterLessons.stream()
+                .map(Lesson::getId)
+                .collect(Collectors.toSet());
+
+        Map<String, String> supporterSubjectsAndProfessor = supporterLessons.stream()
+                .collect(Collectors.toMap(Lesson::getSubject, Lesson::getProfessor));
+
+        for (Lesson disabledLesson : disabledLessons) {
+            // 같은 수업 ID (완전 동일 수업)
+            if (supporterLessonIds.contains(disabledLesson.getId())) {
+                score += 10;
+            }
+            // 수업명이 같을때
+            else if (supporterSubjectsAndProfessor.containsKey(disabledLesson.getSubject())) {
+                // 교수까지 같을때
+                if (disabledLesson.getProfessor().equals(supporterSubjectsAndProfessor.get(disabledLesson.getSubject())))
+                    score += 7;
+                // 다른 교수일때
+                else {
+                    score += 5;
+                }
+            }
+        }
+
+        return score;
     }
 
 }

@@ -27,22 +27,30 @@ public class MatchingScoreCache {
 
     private boolean departmentMatch;
 
+    private boolean isPreferredSupporter;
+
+    private int timeTableMatchScore;
+
     @Builder
-    private MatchingScoreCache(Long disabledStudentId, Long supporterId, int score, boolean genderMatch, boolean departmentMatch) {
+    private MatchingScoreCache(Long disabledStudentId, Long supporterId, int score, boolean genderMatch, boolean departmentMatch, boolean isPreferredSupporter, int timeTableMatchScore) {
         this.disabledStudentId = disabledStudentId;
         this.supporterId = supporterId;
         this.score = score;
         this.genderMatch = genderMatch;
         this.departmentMatch = departmentMatch;
+        this.isPreferredSupporter = isPreferredSupporter;
+        this.timeTableMatchScore = timeTableMatchScore;
     }
 
-    public static MatchingScoreCache of(Long disabledStudentId, Long supporterId, int score, boolean genderMatch, boolean departmentMatch) {
+    public static MatchingScoreCache of(Long disabledStudentId, Long supporterId, int score, boolean genderMatch, boolean departmentMatch, boolean isPreferredSupporter, int timeTableMatchScore) {
         return MatchingScoreCache.builder()
                 .disabledStudentId(disabledStudentId)
                 .supporterId(supporterId)
                 .score(score)
                 .genderMatch(genderMatch)
                 .departmentMatch(departmentMatch)
+                .isPreferredSupporter(isPreferredSupporter)
+                .timeTableMatchScore(timeTableMatchScore)
                 .build();
     }
 }
