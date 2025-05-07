@@ -1,10 +1,10 @@
 package com.kurierfree.server.domain.timeTable.application;
 
-import com.kurierfree.server.domain.auth.enhancer.JwtAuthenticationFilter;
 import com.kurierfree.server.domain.auth.infra.JwtProvider;
 import com.kurierfree.server.domain.lesson.dao.LessonRepository;
 import com.kurierfree.server.domain.lesson.domain.Lesson;
 import com.kurierfree.server.domain.lesson.dto.response.LessonResponse;
+import com.kurierfree.server.domain.lesson.dto.response.LessonScheduleResponse;
 import com.kurierfree.server.domain.semester.application.SemesterService;
 import com.kurierfree.server.domain.timeTable.dao.TimeTableRepository;
 import com.kurierfree.server.domain.timeTable.domain.TimeTable;
@@ -56,7 +56,13 @@ public class TimeTableService {
 
         List<LessonResponse> lessonResponseList = lessonRepository.findByTimeTableId(timeTable.getId())
                 .stream()
-                .map(LessonResponse::from)
+                .map(lesson -> {
+                    List<LessonScheduleResponse> scheduleResponses = lesson.getLessonSchedules()
+                            .stream()
+                            .map(LessonScheduleResponse::from)
+                            .toList();
+                    return LessonResponse.from(lesson, scheduleResponses);
+                })
                 .toList();
 
         return TimeTableResponse.builder()
@@ -67,16 +73,24 @@ public class TimeTableService {
     public int compareTimeTableScore(Long disabledStudentId, Long supporterId) {
         int score = 0;
 
-        TimeTable disabledTimeTable= timeTableRepository.findByUserIdAndSemesterId(
+        TimeTable disabledTimeTable = timeTableRepository.findByUserIdAndSemesterId(
                 disabledStudentId, semesterService.getCurrentSemester().getId()
         );
 
-        TimeTable supporterTimeTable= timeTableRepository.findByUserIdAndSemesterId(
+        TimeTable supporterTimeTable = timeTableRepository.findByUserIdAndSemesterId(
                 supporterId, semesterService.getCurrentSemester().getId()
         );
 
+        if (disabledTimeTable == null || supporterTimeTable == null) {
+            return score;
+        }
+
         List<Lesson> disabledLessons = lessonRepository.findByTimeTableId(disabledTimeTable.getId());
         List<Lesson> supporterLessons = lessonRepository.findByTimeTableId(supporterTimeTable.getId());
+
+        if (disabledLessons == null || supporterLessons == null) {
+            return score;
+        }
 
         Set<Long> supporterLessonIds = supporterLessons.stream()
                 .map(Lesson::getId)

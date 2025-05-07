@@ -8,6 +8,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -26,6 +29,9 @@ public class TimeTable {
     @JoinColumn(name = "semester_id", nullable = false)
     private Semester semester;
 
+    @OneToMany(mappedBy = "timeTable", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TimeTableLesson> lessons = new ArrayList<>();
+
     @Builder
     private TimeTable( User user, Semester semester) {
         this.user = user;
@@ -38,4 +44,10 @@ public class TimeTable {
                 .semester(semester)
                 .build();
     }
+
+    public void addLesson(TimeTableLesson lesson) {
+        lessons.add(lesson);
+        lesson.setTimeTable(this);
+    }
+
 }
