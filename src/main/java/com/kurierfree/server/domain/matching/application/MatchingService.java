@@ -6,7 +6,7 @@ import com.kurierfree.server.domain.matching.domain.Matching;
 import com.kurierfree.server.domain.matching.domain.MatchingScoreCache;
 import com.kurierfree.server.domain.matching.dto.request.MatchingRequest;
 import com.kurierfree.server.domain.matching.dto.response.MatchingResponse;
-import com.kurierfree.server.domain.matching.dto.response.MatchingSupporters;
+import com.kurierfree.server.domain.matching.dto.response.MatchingSupportersResponse;
 import com.kurierfree.server.domain.semester.application.SemesterService;
 import com.kurierfree.server.domain.timeTable.application.TimeTableService;
 import com.kurierfree.server.domain.user.dao.DisabledStudentRepository;
@@ -18,6 +18,8 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -68,10 +70,10 @@ public class MatchingService {
 
             // 매칭이 끝난 서포터즈 -> 매칭 점수 계산 테이블에서 삭제
             matchingScoreCacheRepository.deleteBySupporterId(supporter.getId());
-
-            // Todo: 매칭이 끝난 서포터즈가 생기면 한 장애학생의 top3에만 유일하게 속하는 서포터즈가 있는지 확인
-
         }
+        // Todo: 한 매칭이 끝나면 한 장애학생의 top3에만 유일하게 속하는 서포터즈가 있는지 확인
+
+
     }
 
     @Transactional
@@ -79,14 +81,29 @@ public class MatchingService {
         // 장애학생의 매칭 score 를 기준으로 내림차순 정렬한 list
         List<MatchingScoreCache> matchingScoreCacheList = matchingScoreCacheRepository.findByDisabledStudentIdOrderByScoreDesc(disabledStudentsId);
 
-        List<MatchingSupporters> matchingSupportersList = matchingScoreCacheList.stream()
-                .limit(3) // 상위 3명만 선택
+        List<MatchingScoreCache> matchingSupportersList = new ArrayList<>();
+
+        List<MatchingScoreCache> promotionStatusList = matchingScoreCacheList.stream()
+                .filter(MatchingScoreCache::isPromotionStatus)
+                .toList();
+
+        if (!promotionStatusList.isEmpty()){
+            matchingSupportersList.addAll(promotionStatusList);
+        }
+        matchingSupportersList.addAll(
+                matchingScoreCacheList.stream()
+                        .sorted(Comparator.comparingInt(MatchingScoreCache::getScore).reversed())
+                        .limit(3 - promotionStatusList.size())
+                        .toList()
+        );
+
+        List<MatchingSupportersResponse> matchingSupportersResponseList = matchingSupportersList.stream()
                 .map(matchingScoreCache -> {
                     Supporter supporter = supporterRepository.findById(matchingScoreCache.getSupporterId())
                             .orElseThrow(() -> new EntityNotFoundException("해당 아이디를 가진 서포터즈가 존재하지 않습니다."));
 
-                    return MatchingSupporters.builder()
-                            .rank(matchingScoreCacheList.indexOf(matchingScoreCache) + 1) // 현재 인덱스를 rank로 사용
+                    return MatchingSupportersResponse.builder()
+                            .rank(matchingSupportersList.indexOf(matchingScoreCache) + 1) // 현재 인덱스를 rank로 사용
                             .supporterId(supporter.getId())
                             .name(supporter.getName())
                             .department(supporter.getDepartment())
@@ -97,7 +114,7 @@ public class MatchingService {
                 .toList();
 
         return MatchingResponse.builder()
-                .matchingSupporters(matchingSupportersList)
+                .matchingSupporterResponses(matchingSupportersResponseList)
                 .build();
     }
 

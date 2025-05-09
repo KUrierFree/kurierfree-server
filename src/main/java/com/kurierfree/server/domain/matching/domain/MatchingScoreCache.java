@@ -30,6 +30,8 @@ public class MatchingScoreCache {
 
     private int timeTableMatchScore;
 
+    private boolean promotionStatus = false;
+
     @Builder
     private MatchingScoreCache(Long disabledStudentId, Long supporterId, int score, boolean genderMatch, boolean departmentMatch, boolean isPreferredSupporter, int timeTableMatchScore) {
         this.disabledStudentId = disabledStudentId;
@@ -51,5 +53,13 @@ public class MatchingScoreCache {
                 .isPreferredSupporter(isPreferredSupporter)
                 .timeTableMatchScore(timeTableMatchScore)
                 .build();
+    }
+
+    public void promoteToTop1() {
+        this.promotionStatus = true;
+    }
+
+    public void cancelPromotion() {
+        this.promotionStatus = false;
     }
 }

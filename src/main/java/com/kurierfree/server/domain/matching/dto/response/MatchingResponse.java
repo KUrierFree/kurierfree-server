@@ -10,5 +10,5 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class MatchingResponse {
-    private List<MatchingSupporters> matchingSupporters;
+    private List<MatchingSupportersResponse> matchingSupporterResponses;
 }

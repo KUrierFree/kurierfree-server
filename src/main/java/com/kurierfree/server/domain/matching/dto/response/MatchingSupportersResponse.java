@@ -8,7 +8,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 @Builder
-public class MatchingSupporters {
+public class MatchingSupportersResponse {
     private int rank;
     private Long supporterId;
     private String name;
