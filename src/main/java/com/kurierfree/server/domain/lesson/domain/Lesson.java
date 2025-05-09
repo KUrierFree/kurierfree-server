@@ -25,7 +25,6 @@ public class Lesson {
     @Column(nullable = false)
     private String professor;
 
-
     @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LessonSchedule> lessonSchedules = new ArrayList<>();
 

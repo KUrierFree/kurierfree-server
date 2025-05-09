@@ -130,7 +130,6 @@ public class MatchingService {
         if (departmentMatch) score += 1;
         score += timeTableMatchScore;
 
-
         MatchingScoreCache matchingScoreCache = MatchingScoreCache.of(
                 disabledStudentsId,
                 supporterId,
@@ -145,7 +144,7 @@ public class MatchingService {
     }
 
     // 매칭 score 저장: 선발기간 시작시기에 맞춰 1회만 실행
-    //@PostConstruct // Todo: 스케줄링으로 바꾸기
+    @PostConstruct // Todo: 스케줄링으로 바꾸기
     public void initMatchingScoreRepository(){
         if (matchingScoreCacheRepository.count() != 0) {
             return;

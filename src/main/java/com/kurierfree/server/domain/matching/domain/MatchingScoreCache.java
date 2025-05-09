@@ -1,6 +1,5 @@
 package com.kurierfree.server.domain.matching.domain;
 
-
 import jakarta.persistence.*;
 import lombok.*;
 

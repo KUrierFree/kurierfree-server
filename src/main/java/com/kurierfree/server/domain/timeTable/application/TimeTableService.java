@@ -7,7 +7,7 @@ import com.kurierfree.server.domain.lesson.dto.response.LessonResponse;
 import com.kurierfree.server.domain.lesson.dto.response.LessonScheduleResponse;
 import com.kurierfree.server.domain.semester.application.SemesterService;
 import com.kurierfree.server.domain.timeTable.dao.TimeTableRepository;
-import com.kurierfree.server.domain.timeTable.domain.TimeTable;
+import com.kurierfree.server.domain.timeTable.domain.TimeTableLesson;
 import com.kurierfree.server.domain.timeTable.dto.response.TimeTableResponse;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
@@ -46,22 +46,21 @@ public class TimeTableService {
     }
 
     private TimeTableResponse getTimeTableResponse(Long userId) {
-        TimeTable timeTable= timeTableRepository.findByUserIdAndSemesterId(
+        List<TimeTableLesson> timeTableLessons= timeTableRepository.findLessonsByUserIdAndSemesterId(
                 userId, semesterService.getCurrentSemester().getId()
         );
-        if (timeTable == null) {
+        if (timeTableLessons == null) {
             throw new EntityNotFoundException("TimeTable not found for userId: " + userId);
-
         }
 
-        List<LessonResponse> lessonResponseList = lessonRepository.findByTimeTableId(timeTable.getId())
+        List<LessonResponse> lessonResponseList = timeTableLessons
                 .stream()
-                .map(lesson -> {
-                    List<LessonScheduleResponse> scheduleResponses = lesson.getLessonSchedules()
+                .map(timeTableLesson -> {
+                    List<LessonScheduleResponse> scheduleResponses = timeTableLesson.getLesson().getLessonSchedules()
                             .stream()
                             .map(LessonScheduleResponse::from)
                             .toList();
-                    return LessonResponse.from(lesson, scheduleResponses);
+                    return LessonResponse.from(timeTableLesson.getLesson(), scheduleResponses);
                 })
                 .toList();
 
@@ -73,49 +72,47 @@ public class TimeTableService {
     public int compareTimeTableScore(Long disabledStudentId, Long supporterId) {
         int score = 0;
 
-        TimeTable disabledTimeTable = timeTableRepository.findByUserIdAndSemesterId(
+        List<TimeTableLesson> disabledTimeTableLessons = timeTableRepository.findLessonsByUserIdAndSemesterId(
                 disabledStudentId, semesterService.getCurrentSemester().getId()
         );
 
-        TimeTable supporterTimeTable = timeTableRepository.findByUserIdAndSemesterId(
+        List<TimeTableLesson> supporterTimeTableLessons = timeTableRepository.findLessonsByUserIdAndSemesterId(
                 supporterId, semesterService.getCurrentSemester().getId()
         );
 
-        if (disabledTimeTable == null || supporterTimeTable == null) {
+        if (disabledTimeTableLessons.isEmpty() || supporterTimeTableLessons.isEmpty()) {
             return score;
         }
 
-        List<Lesson> disabledLessons = lessonRepository.findByTimeTableId(disabledTimeTable.getId());
-        List<Lesson> supporterLessons = lessonRepository.findByTimeTableId(supporterTimeTable.getId());
-
-        if (disabledLessons == null || supporterLessons == null) {
-            return score;
-        }
-
-        Set<Long> supporterLessonIds = supporterLessons.stream()
-                .map(Lesson::getId)
+        Set<Long> supporterLessonIds = supporterTimeTableLessons.stream()
+                .map( timeTableLesson -> timeTableLesson.getLesson().getId())
                 .collect(Collectors.toSet());
 
-        Map<String, String> supporterSubjectsAndProfessor = supporterLessons.stream()
+        Map<String, String> supporterSubjectsAndProfessor = supporterTimeTableLessons.stream()
+                .map(TimeTableLesson::getLesson)
                 .collect(Collectors.toMap(Lesson::getSubject, Lesson::getProfessor));
 
-        for (Lesson disabledLesson : disabledLessons) {
-            // 같은 수업 ID (완전 동일 수업)
-            if (supporterLessonIds.contains(disabledLesson.getId())) {
+        for (TimeTableLesson disabledTimeTableLesson : disabledTimeTableLessons) {
+
+            // 1. 같은 수업 ID (완전 동일 수업)
+            if (supporterLessonIds.contains(disabledTimeTableLesson.getLesson().getId())) {
                 score += 10;
             }
-            // 수업명이 같을때
-            else if (supporterSubjectsAndProfessor.containsKey(disabledLesson.getSubject())) {
-                // 교수까지 같을때
-                if (disabledLesson.getProfessor().equals(supporterSubjectsAndProfessor.get(disabledLesson.getSubject())))
+            // 수업명이 같을때 (분반이 다르면 다른 LessonId를 가짐)
+            else if (supporterSubjectsAndProfessor.containsKey(disabledTimeTableLesson.getLesson().getSubject())) {
+
+                // 2. 수업 명과 교수가 같을때 = 동일 수업 다른 분반
+                if (disabledTimeTableLesson.getLesson().getProfessor().equals(
+                        supporterSubjectsAndProfessor.get(disabledTimeTableLesson.getLesson().getSubject()))
+                ) {
                     score += 7;
-                // 다른 교수일때
+                }
+                // 3. 수업 명은 같지만 다른 교수일때
                 else {
                     score += 5;
                 }
             }
         }
-
         return score;
     }
 

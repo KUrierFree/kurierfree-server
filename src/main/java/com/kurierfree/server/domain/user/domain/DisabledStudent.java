@@ -37,6 +37,6 @@ public class DisabledStudent extends User{
     }
 
     public boolean isPreferredSupporter(Long supporterId) {
-        return this.preferredSupporter != null && this.preferredSupporter.getId().equals(supporterId);
+        return this.preferredSupporter != null && this.preferredSupporter.getId() == supporterId;
     }
 }
