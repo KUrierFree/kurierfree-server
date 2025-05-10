@@ -18,9 +18,8 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class MatchingService {
@@ -71,8 +70,54 @@ public class MatchingService {
             // 매칭이 끝난 서포터즈 -> 매칭 점수 계산 테이블에서 삭제
             matchingScoreCacheRepository.deleteBySupporterId(supporter.getId());
         }
-        // Todo: 한 매칭이 끝나면 한 장애학생의 top3에만 유일하게 속하는 서포터즈가 있는지 확인
+        // 한 매칭이 끝나면 한 장애학생의 top3에만 유일하게 속하는 서포터즈가 있는지 확인
+        promoteUniqueTop3SupportersToTop1();
+    }
 
+    private void promoteUniqueTop3SupportersToTop1(){
+        List<MatchingScoreCache> allMatchingScoreCacheList = matchingScoreCacheRepository.findAll();
+
+        // 장애학생 별 서포터즈 top3 Map
+        Map<Long, List<Long>> topThreeSupportersMap = allMatchingScoreCacheList.stream()
+                .collect(Collectors.groupingBy(
+                        MatchingScoreCache::getDisabledStudentId, //key
+                        Collectors.collectingAndThen( //value
+                                Collectors.toList(),
+                                (List<MatchingScoreCache> list) -> list.stream()
+                                        .sorted(Comparator.comparingInt(MatchingScoreCache::getScore).reversed())
+                                        .limit(3)
+                                        .map(MatchingScoreCache::getSupporterId)
+                                        .toList()
+                        )
+                ));
+
+        // 서포터즈 별로 top3 안에 드는 장애학생 id map
+        Map<Long, List<Long>> supporterToDisabledInTopThreeMap = new HashMap<>();
+        topThreeSupportersMap.forEach((disabled, supporterList) ->
+                supporterList.forEach(supporter ->
+                        supporterToDisabledInTopThreeMap
+                                .computeIfAbsent(supporter, k -> new ArrayList<>())
+                                .add(disabled)));
+
+        // 어떤 서포터즈가 단 하나의 장애학생의 top3 에만 들어가 있으면 top1으로 승격시키기
+        supporterToDisabledInTopThreeMap.forEach((supporterId, disabledList)->{
+            if (disabledList.size() == 1){
+                MatchingScoreCache findMatchingScoreCache = matchingScoreCacheRepository.findByDisabledStudentIdAndSupporterId(disabledList.getFirst(), supporterId);
+                findMatchingScoreCache.promoteToTop1();
+                matchingScoreCacheRepository.save(findMatchingScoreCache);
+            }
+            else{ // 서포터즈가 둘 이상의 top3 안에 들어가 있다면,
+                List<MatchingScoreCache> findMatchingScoreCacheList = matchingScoreCacheRepository.findBySupporterId(supporterId);
+                findMatchingScoreCacheList.forEach(matchingScoreCache -> {
+                    // 승격시킨 적이 있는 matchingScore 는 원래대로 복원
+                    if (matchingScoreCache.isPromotionStatus()){
+                        matchingScoreCache.cancelPromotion();
+                        matchingScoreCacheRepository.save(matchingScoreCache);
+                    }
+
+                });
+            }
+        });
 
     }
 
@@ -92,7 +137,7 @@ public class MatchingService {
         }
         matchingSupportersList.addAll(
                 matchingScoreCacheList.stream()
-                        .sorted(Comparator.comparingInt(MatchingScoreCache::getScore).reversed())
+                        .filter( matchingScoreCache -> !matchingScoreCache.isPromotionStatus())
                         .limit(3 - promotionStatusList.size())
                         .toList()
         );
@@ -172,6 +217,7 @@ public class MatchingService {
                 saveMatchingScore(disabledStudentId, supporterId);
             }
         }
+        promoteUniqueTop3SupportersToTop1();
     }
 
 }

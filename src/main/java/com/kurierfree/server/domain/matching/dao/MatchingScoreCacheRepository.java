@@ -9,4 +9,8 @@ public interface MatchingScoreCacheRepository extends JpaRepository<MatchingScor
     void deleteBySupporterId(Long supporterId); // 매칭 확정된 서포터즈 제거 시 사용
 
     void deleteBySupporterIdAndDisabledStudentId(Long supporterId, Long disabledStudentId);
+
+    MatchingScoreCache findByDisabledStudentIdAndSupporterId(Long disabledStudentId, Long supporterId);
+    List<MatchingScoreCache> findBySupporterId(Long supporterId);
+
 }
