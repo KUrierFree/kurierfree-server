@@ -16,4 +16,7 @@ public interface DisabledStudentRepository extends JpaRepository<DisabledStudent
     FROM DisabledStudent ds
 """)
     List<DisabledStudentResponse> findAllForAdmin();
+
+    @Query("SELECT d.id FROM DisabledStudent d")
+    List<Long> findAllIds(); // 모든 장애학생 ID만 추출
 }

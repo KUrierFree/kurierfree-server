@@ -1,11 +1,13 @@
 package com.kurierfree.server.domain.lesson.domain;
 
-import com.kurierfree.server.domain.timeTable.domain.TimeTable;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -17,57 +19,30 @@ public class Lesson {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "time_table_id", nullable = false)
-    private TimeTable timeTable;
-
     @Column(nullable = false)
     private String subject;
 
     @Column(nullable = false)
     private String professor;
 
-    @Column(nullable = false)
-    private String classroom;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private ClassDay classDay;
-
-    @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "hour", column = @Column(name = "start_hour", nullable = false)),
-            @AttributeOverride(name = "minute", column = @Column(name = "start_minute", nullable = false))
-    })
-    private ClassTime startTime;
-
-    @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "hour", column = @Column(name = "end_hour", nullable = false)),
-            @AttributeOverride(name = "minute", column = @Column(name = "end_minute", nullable = false))
-    })
-    private ClassTime endTime;
+    @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<LessonSchedule> lessonSchedules = new ArrayList<>();
 
     @Builder
-    private Lesson(TimeTable timeTable, String subject, String professor, String classroom, ClassDay classDay, ClassTime startTime, ClassTime endTime) {
-        this.timeTable = timeTable;
+    private Lesson(String subject, String professor) {
         this.subject = subject;
         this.professor = professor;
-        this.classroom = classroom;
-        this.classDay = classDay;
-        this.startTime = startTime;
-        this.endTime = endTime;
     }
 
-    public static Lesson of(String subject, String professor, String classroom, ClassDay classDay, ClassTime startTime, ClassTime endTime) {
+    public static Lesson of(String subject, String professor) {
         return Lesson.builder()
                 .subject(subject)
                 .professor(professor)
-                .classroom(classroom)
-                .classDay(classDay)
-                .startTime(startTime)
-                .endTime(endTime)
                 .build();
     }
 
+    public void addLessonSchedules(LessonSchedule lessonSchedule) {
+        this.lessonSchedules.add(lessonSchedule);
+        lessonSchedule.setLesson(this);
+    }
 }
