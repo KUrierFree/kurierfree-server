@@ -1,9 +1,8 @@
 package com.kurierfree.server.domain.semester.api;
 
-import com.kurierfree.server.domain.list.application.ListService;
-import com.kurierfree.server.domain.list.dto.response.DisabledStudentResponse;
 import com.kurierfree.server.domain.semester.application.SemesterService;
 import com.kurierfree.server.domain.semester.dto.request.RecruitmentPeriodRequest;
+import com.kurierfree.server.domain.semester.dto.response.RecruitmentPeriodResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +38,20 @@ public class SemesterApi {
         try {
             semesterService.setSelectionPeriod(semesterId, recruitmentPeriodRequest);
             return ResponseEntity.ok("선발 기간이 설정되었습니다.");
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (AccessDeniedException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        } catch (IllegalStateException e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+    @Operation(summary = "지원 기간, 선발 기간 조회")
+    @GetMapping("/recruitment-period")
+    public ResponseEntity<RecruitmentPeriodResponse> getRecruitmentPeriod(@PathVariable Long semesterId) {
+        try {
+            RecruitmentPeriodResponse recruitmentPeriodResponse = semesterService.getRecruitmentPeriod(semesterId);
+            return ResponseEntity.ok(recruitmentPeriodResponse);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
         } catch (AccessDeniedException e) {

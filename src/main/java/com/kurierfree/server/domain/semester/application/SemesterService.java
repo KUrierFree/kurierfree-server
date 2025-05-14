@@ -3,9 +3,12 @@ package com.kurierfree.server.domain.semester.application;
 import com.kurierfree.server.domain.semester.dao.SemesterRepository;
 import com.kurierfree.server.domain.semester.domain.Semester;
 import com.kurierfree.server.domain.semester.dto.request.RecruitmentPeriodRequest;
+import com.kurierfree.server.domain.semester.dto.response.RecruitmentPeriodResponse;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
 
 @Service
 public class SemesterService {
@@ -48,5 +51,13 @@ public class SemesterService {
                 recruitmentPeriodRequest.getStartDate(),
                 recruitmentPeriodRequest.getEndDate()
         );
+    }
+
+    @Transactional
+    public RecruitmentPeriodResponse getRecruitmentPeriod(Long semesterId) {
+        Semester semester = semesterRepository.findById(semesterId)
+                .orElseThrow(() -> new EntityNotFoundException("Semester not found with id: " + semesterId));
+
+        return RecruitmentPeriodResponse.from(semester, LocalDate.now());
     }
 }
