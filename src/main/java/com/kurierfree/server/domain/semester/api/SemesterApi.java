@@ -46,7 +46,8 @@ public class SemesterApi {
             return ResponseEntity.internalServerError().build();
         }
     }
-    @Operation(summary = "지원 기간, 선발 기간 조회")
+    @Operation(summary = "지원 기간, 선발 기간 조회",
+            description = "isSelectionEndAfterNow = true 면, 마감날이 현재 날짜와 동일하거나 이후라는 뜻")
     @GetMapping("/recruitment-period")
     public ResponseEntity<RecruitmentPeriodResponse> getRecruitmentPeriod(@PathVariable Long semesterId) {
         try {

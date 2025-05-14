@@ -13,25 +13,25 @@ import java.time.LocalDate;
 public class RecruitmentPeriodResponse {
     private LocalDate applicationStart;
     private LocalDate applicationEnd;
-    private boolean isApplicationBeforeNow;
+    private boolean isApplicationEndAfterNow;
 
     private LocalDate selectionStart;
     private LocalDate selectionEnd;
-    private boolean isSelectionBeforeNow;
+    private boolean isSelectionEndAfterNow;
 
     public static RecruitmentPeriodResponse from(Semester semester, LocalDate now) {
         return RecruitmentPeriodResponse.builder()
                 .applicationStart(semester.getApplicationStartDate())
                 .applicationEnd(semester.getApplicationEndDate())
-                .isApplicationBeforeNow(isBefore(now, semester.getApplicationEndDate()))
+                .isApplicationEndAfterNow(isBefore(now, semester.getApplicationEndDate()))
 
                 .selectionStart(semester.getSelectionStartDate())
                 .selectionEnd(semester.getSelectionEndDate())
-                .isSelectionBeforeNow(isBefore(now, semester.getSelectionEndDate()))
+                .isSelectionEndAfterNow(isBefore(now, semester.getSelectionEndDate()))
                 .build();
     }
 
     private static boolean isBefore(LocalDate now, LocalDate end) {
-        return end != null && !now.isAfter(end);
+        return end != null && !now.isAfter(end); // 설정날까지 true
     }
 }
