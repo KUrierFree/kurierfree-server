@@ -2,6 +2,8 @@ package com.kurierfree.server.domain.semester.application;
 
 import com.kurierfree.server.domain.semester.dao.SemesterRepository;
 import com.kurierfree.server.domain.semester.domain.Semester;
+import com.kurierfree.server.domain.semester.dto.request.RecruitmentPeriodRequest;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,5 +26,27 @@ public class SemesterService {
         Semester newSemester = Semester.createCurrentSemester();
         Semester findSemester = semesterRepository.findByYearAndSemesterTime(newSemester.getYear(), newSemester.getSemesterTime());
         return (findSemester != null) ? findSemester : createAndSaveCurrentSemester();
+    }
+
+    @Transactional
+    public void setApplicationPeriod(Long semesterId, RecruitmentPeriodRequest recruitmentPeriodRequest) {
+        Semester semester = semesterRepository.findById(semesterId)
+                .orElseThrow(() -> new EntityNotFoundException("Semester not found with id: " + semesterId));
+
+        semester.updateApplicationPeriod(
+                recruitmentPeriodRequest.getStartDate(),
+                recruitmentPeriodRequest.getEndDate()
+        );
+    }
+
+    @Transactional
+    public void setSelectionPeriod(Long semesterId, RecruitmentPeriodRequest recruitmentPeriodRequest) {
+        Semester semester = semesterRepository.findById(semesterId)
+                .orElseThrow(() -> new EntityNotFoundException("Semester not found with id: " + semesterId));
+
+        semester.updateSelectionPeriod(
+                recruitmentPeriodRequest.getStartDate(),
+                recruitmentPeriodRequest.getEndDate()
+        );
     }
 }
