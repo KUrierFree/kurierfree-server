@@ -3,6 +3,7 @@ package com.kurierfree.server.domain.timeTable.application;
 import com.kurierfree.server.domain.auth.infra.JwtProvider;
 import com.kurierfree.server.domain.lesson.dao.LessonRepository;
 import com.kurierfree.server.domain.lesson.domain.Lesson;
+import com.kurierfree.server.domain.lesson.domain.LessonSchedule;
 import com.kurierfree.server.domain.lesson.dto.response.LessonResponse;
 import com.kurierfree.server.domain.lesson.dto.response.LessonScheduleResponse;
 import com.kurierfree.server.domain.semester.application.SemesterService;
@@ -67,6 +68,19 @@ public class TimeTableService {
         return TimeTableResponse.builder()
                 .lessons(lessonResponseList)
                 .build();
+    }
+    @Transactional
+    public List<LessonSchedule> getTimeTable(Long userId) {
+        List<TimeTableLesson> timeTableLessons= timeTableRepository.findLessonsByUserIdAndSemesterId(
+                userId, semesterService.getCurrentSemester().getId()
+        );
+        if (timeTableLessons.isEmpty()) {
+            return List.of();
+        }
+
+        return timeTableLessons.stream()
+                .flatMap(tl -> tl.getLesson().getLessonSchedules().stream())
+                .toList();
     }
 
     public int compareTimeTableScore(Long disabledStudentId, Long supporterId) {

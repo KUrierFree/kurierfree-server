@@ -3,6 +3,8 @@ package com.kurierfree.server.domain.lesson.domain;
 import jakarta.persistence.Embeddable;
 import lombok.Getter;
 
+import java.time.LocalTime;
+
 @Embeddable
 @Getter
 public class ClassTime {
@@ -35,6 +37,10 @@ public class ClassTime {
     @Override
     public String toString() {
         return String.format("%02d:%02d", hour, minute);
+    }
+
+    public LocalTime toLocalTime() {
+        return LocalTime.of(hour, minute);
     }
 
 }
