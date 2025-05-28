@@ -1,7 +1,8 @@
 package com.kurierfree.server.domain.application.dto.request;
 
-import com.kurierfree.server.domain.application.domain.ActivityPreference;
 import com.kurierfree.server.domain.application.domain.enums.ActivityType;
+import com.kurierfree.server.domain.lesson.domain.ClassDay;
+import com.kurierfree.server.domain.lesson.domain.ClassTime;
 import com.kurierfree.server.domain.user.domain.enums.Gender;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -33,6 +34,9 @@ public class ApplicationRequest {
         private int priority;
         private String preferredActivity;
         private String availableTime;
+        private ClassDay classDay;
+        private ClassTime startTime;
+        private ClassTime endTime;
     }
 
 }

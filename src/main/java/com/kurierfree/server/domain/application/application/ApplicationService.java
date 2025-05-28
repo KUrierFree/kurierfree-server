@@ -41,7 +41,9 @@ public class ApplicationService {
                     .map(dto -> ActivityPreference.of(
                             dto.getPriority(),
                             dto.getPreferredActivity(),
-                            dto.getAvailableTime()
+                            dto.getClassDay(),
+                            dto.getStartTime(),
+                            dto.getEndTime()
                     ))
                     .toList();
 

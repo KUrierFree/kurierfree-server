@@ -1,5 +1,6 @@
 package com.kurierfree.server.domain.matching.application;
 
+import com.kurierfree.server.domain.application.dao.ApplicationRepository;
 import com.kurierfree.server.domain.matching.dao.MatchingRepository;
 import com.kurierfree.server.domain.matching.dao.MatchingScoreCacheRepository;
 import com.kurierfree.server.domain.matching.domain.Matching;
@@ -15,6 +16,7 @@ import com.kurierfree.server.domain.user.domain.DisabledStudent;
 import com.kurierfree.server.domain.user.domain.Supporter;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +24,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class MatchingService {
     private final MatchingRepository matchingRepository;
     private final SupporterRepository supporterRepository;
@@ -29,22 +32,7 @@ public class MatchingService {
     private final SemesterService semesterService;
     private final MatchingScoreCacheRepository matchingScoreCacheRepository;
     private final TimeTableService timeTableService;
-
-    public MatchingService(
-            MatchingRepository matchingRepository,
-            SupporterRepository supporterRepository,
-            DisabledStudentRepository disabledStudentRepository,
-            SemesterService semesterService,
-            MatchingScoreCacheRepository matchingScoreCacheRepository,
-            TimeTableService timeTableService
-    ) {
-        this.matchingRepository = matchingRepository;
-        this.supporterRepository = supporterRepository;
-        this.disabledStudentRepository = disabledStudentRepository;
-        this.semesterService = semesterService;
-        this.matchingScoreCacheRepository = matchingScoreCacheRepository;
-        this.timeTableService = timeTableService;
-    }
+    private final ApplicationRepository applicationRepository;
 
     @Transactional
     public void createMatching(MatchingRequest matchingRequest) {
@@ -177,6 +165,9 @@ public class MatchingService {
         boolean isPreferredSupporter = disabledStudent.isPreferredSupporter(supporterId);
 
         // Todo: 장애학생 수업시간 = 서포터즈 활동 가능시간인가
+
+
+
         // 동일 과목 수강 여부
         int timeTableMatchScore = timeTableService.compareTimeTableScore(disabledStudentsId, supporterId);
 
