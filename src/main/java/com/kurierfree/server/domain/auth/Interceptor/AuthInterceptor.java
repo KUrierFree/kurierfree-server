@@ -26,14 +26,7 @@ public class AuthInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        String path = request.getRequestURI();
-
-        // /api/admin으로 시작하는 요청만 토큰 검사를 진행
-        if (path.startsWith("/api/admin")) {
-            return !validateAdminLogin(request, response); // 요청을 중단
-        }
-
-        return true; // 요청을 계속 진행
+        return validateAdminLogin(request, response); // 요청을 중단
     }
 
     private boolean validateAdminLogin(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -42,7 +35,7 @@ public class AuthInterceptor implements HandlerInterceptor {
         // 토큰이 없거나 형식이 잘못된 경우
         if (token == null || !token.startsWith("Bearer ")) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "토큰이 필요합니다.");
-            return true;
+            return false;
         }
 
         String jwtToken = token.substring(7); // "Bearer "를 제외한 토큰
@@ -61,8 +54,8 @@ public class AuthInterceptor implements HandlerInterceptor {
 
         if (user.getRole() != Role.ADMIN) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "관리자만 접근할 수 있습니다.");
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 }
