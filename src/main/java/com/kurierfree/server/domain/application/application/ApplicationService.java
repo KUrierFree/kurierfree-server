@@ -5,6 +5,7 @@ import com.kurierfree.server.domain.application.domain.ActivityPreference;
 import com.kurierfree.server.domain.application.domain.Application;
 import com.kurierfree.server.domain.application.dto.request.ApplicationRequest;
 import com.kurierfree.server.domain.application.dto.response.ApplicationResponse;
+import com.kurierfree.server.domain.user.domain.Supporter;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,7 +42,9 @@ public class ApplicationService {
                     .map(dto -> ActivityPreference.of(
                             dto.getPriority(),
                             dto.getPreferredActivity(),
-                            dto.getAvailableTime()
+                            dto.getClassDay(),
+                            dto.getStartTime(),
+                            dto.getEndTime()
                     ))
                     .toList();
 
@@ -51,5 +54,13 @@ public class ApplicationService {
         Application save = applicationRepository.save(application);
 
         return ApplicationResponse.from(save);
+    }
+
+    public List<ActivityPreference> getActivityPreference(Supporter supporter) {
+        Application application = applicationRepository.findByStudentId(supporter.getStudentId());
+        if (application == null || application.getActivityPreference().isEmpty()) {
+            return List.of();
+        }
+        return application.getActivityPreference();
     }
 }

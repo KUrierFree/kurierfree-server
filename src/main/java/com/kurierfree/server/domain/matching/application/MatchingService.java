@@ -1,5 +1,9 @@
 package com.kurierfree.server.domain.matching.application;
 
+import com.kurierfree.server.domain.application.application.ApplicationService;
+import com.kurierfree.server.domain.application.dao.ApplicationRepository;
+import com.kurierfree.server.domain.application.domain.ActivityPreference;
+import com.kurierfree.server.domain.lesson.domain.LessonSchedule;
 import com.kurierfree.server.domain.matching.dao.MatchingRepository;
 import com.kurierfree.server.domain.matching.dao.MatchingScoreCacheRepository;
 import com.kurierfree.server.domain.matching.domain.Matching;
@@ -15,13 +19,16 @@ import com.kurierfree.server.domain.user.domain.DisabledStudent;
 import com.kurierfree.server.domain.user.domain.Supporter;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class MatchingService {
     private final MatchingRepository matchingRepository;
     private final SupporterRepository supporterRepository;
@@ -29,22 +36,7 @@ public class MatchingService {
     private final SemesterService semesterService;
     private final MatchingScoreCacheRepository matchingScoreCacheRepository;
     private final TimeTableService timeTableService;
-
-    public MatchingService(
-            MatchingRepository matchingRepository,
-            SupporterRepository supporterRepository,
-            DisabledStudentRepository disabledStudentRepository,
-            SemesterService semesterService,
-            MatchingScoreCacheRepository matchingScoreCacheRepository,
-            TimeTableService timeTableService
-    ) {
-        this.matchingRepository = matchingRepository;
-        this.supporterRepository = supporterRepository;
-        this.disabledStudentRepository = disabledStudentRepository;
-        this.semesterService = semesterService;
-        this.matchingScoreCacheRepository = matchingScoreCacheRepository;
-        this.timeTableService = timeTableService;
-    }
+    private final ApplicationService applicationService;
 
     @Transactional
     public void createMatching(MatchingRequest matchingRequest) {
@@ -176,7 +168,9 @@ public class MatchingService {
         // 사전 지정이라면 1순위로 만들기
         boolean isPreferredSupporter = disabledStudent.isPreferredSupporter(supporterId);
 
-        // Todo: 장애학생 수업시간 = 서포터즈 활동 가능시간인가
+        // 장애학생 수업시간 = 서포터즈 활동 가능시간인가
+        int activityPreferenceScore = getActivityPreferenceScore(disabledStudentsId, supporter);
+
         // 동일 과목 수강 여부
         int timeTableMatchScore = timeTableService.compareTimeTableScore(disabledStudentsId, supporterId);
 
@@ -190,6 +184,7 @@ public class MatchingService {
         if (isPreferredSupporter) score += 100;
         if (genderMatch) score += 3;
         if (departmentMatch) score += 1;
+        score += activityPreferenceScore;
         score += timeTableMatchScore;
 
         MatchingScoreCache matchingScoreCache = MatchingScoreCache.of(
@@ -203,6 +198,43 @@ public class MatchingService {
                 );
 
         matchingScoreCacheRepository.save(matchingScoreCache);
+    }
+
+    private int getActivityPreferenceScore(Long disabledStudentsId, Supporter supporter) {
+        int score = 0;
+        List<LessonSchedule> lessonSchedules = timeTableService.getTimeTable(disabledStudentsId);
+        List<ActivityPreference> preferences = applicationService.getActivityPreference(supporter);
+        for (ActivityPreference preference : preferences) {
+            for (LessonSchedule schedule : lessonSchedules) {
+                if (isOverlapping(preference, schedule)) {
+                    score += getScoreByPriority(preference.getPriority());
+                }
+            }
+        }
+        return score;
+    }
+
+    private boolean isOverlapping(ActivityPreference pref, LessonSchedule schedule) {
+        if (!pref.getClassDay().equals(schedule.getClassDay())) return false;
+
+        // ClassTime → LocalTime 변환
+        LocalTime prefStart = pref.getStartTime().toLocalTime();
+        LocalTime prefEnd = pref.getEndTime().toLocalTime();
+        LocalTime classStart = schedule.getStartTime().toLocalTime();
+        LocalTime classEnd = schedule.getEndTime().toLocalTime();
+
+        // 시간이 겹치는지 확인
+        return !(prefEnd.isBefore(classStart) || prefStart.isAfter(classEnd));
+    }
+
+
+    private int getScoreByPriority(int priority) {
+        // 예시: priority 1등은 3점, 2등은 2점, 그 외는 1점
+        return switch (priority) {
+            case 1 -> 30;
+            case 2 -> 20;
+            default -> 10;
+        };
     }
 
     // 매칭 score 저장: 선발기간 시작시기에 맞춰 1회만 실행
